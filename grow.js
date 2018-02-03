@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Dustin Doloff
+// Copyright (c) 2016-2018 Dustin Toff
 // Licensed under Apache License v2.0
 
 /********************************************************
@@ -30,7 +30,7 @@ TODO: speed up game
 
     var loadingText = 'Loading...';
 
-    /** @type {!Object.<string, string>} */ const resource_root = RESOURCE_PATHS['projects']['fallingsand']['Grow'];
+    /** @type {!Object.<string, string>} */ const resource_root = RESOURCE_PATHS['Grow'];
     var world = resource_root['world4.grw'];
     var imageLocation = resource_root['images'];
 
