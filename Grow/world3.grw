@@ -1,0 +1,5 @@
+<player x="100" y="100" position="absolute">
+<elem shape="rectangle" position="absolute" x="20" y="10" width="10" height="100" type="fire">
+<elem shape="rectangle" position="relative" x=".15" y=".2" width=".04" height=".6" type="wall">
+<elem shape="elipse" position="relative" x=".3" y=".875" width=".34" height=".15" type="growth">
+<elem shape="rectangle" position="relative" x=".637" y=".4" width=".05" height=".003" type="dropletGen">

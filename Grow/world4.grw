@@ -1,0 +1,11 @@
+<player x=".35" y=".29" position="relative">
+<elem shape="rectangle" position="relative" x=".3" y=".3" width=".6" height=".03" type="wall">
+<elem shape="rectangle" position="relative" x=".55" y=".4" width=".85" height=".03" type="wall">
+<elem shape="rectangle" position="relative" x=".4" y=".5" width=".6" height=".03" type="wall">
+<elem shape="rectangle" position="relative" x=".55" y=".6" width=".85" height=".03" type="wall">
+<elem shape="rectangle" position="relative" x=".3" y=".7" width=".6" height=".03" type="wall">
+<elem shape="rectangle" position="relative" x=".55" y=".8" width=".85" height=".03" type="wall">
+<elem shape="rectangle" position="relative" x=".3" y=".9" width=".6" height=".03" type="wall">
+<elem shape="rectangle" position="relative" x=".55" y=".98" width=".85" height=".03" type="wall">
+<elem shape="rectangle" position="relative" x=".29" y=".3" width=".01" height="1" type="wall">
+<elem shape="rectangle" position="relative" x=".989" y=".3" width=".01" height="1" type="wall">

@@ -1,0 +1,255 @@
+/* IE9 only */
+@media screen and (min-width:0\0) and (min-resolution:.001dpcm) {
+	.gradient {
+       filter: none;
+    }
+}
+
+#header{
+	text-align: center;
+	margin: 20px auto;
+}
+#videoid{
+	width: 500px;
+}
+#wrapper{
+	width: 1000px;
+	position: relative;
+	text-align: center;
+	margin: auto;
+}
+#playerSection{
+	position: relative;
+}
+#commentCanvas{
+	border: 1px solid #eee;
+	border-radius: 5px;
+	position: absolute;
+	top: -25px;
+	left: -25px;
+	cursor: default;
+	z-index: 99;
+	box-shadow: 0 0 18px #ccc;
+}
+#commentCanvas:active{
+	cursor: default;
+}
+#playerHolder, #player{
+	max-height: 510px;
+}
+#playerWrapper{
+	width: 760px;
+	position: relative;
+	margin: 50px;
+}
+#commentHolder{
+	clear: both;
+	margin: 20px 0;
+}
+#commentHolder-left{
+	float: left;
+	width: 295px;
+}
+#commentSent{
+	background: #ddd;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	margin: auto;
+	display: inline-block;
+	padding: 5px 25px;
+	visibility: hidden;
+}
+#playerControls{
+	width: 100%;
+	height: 6px;
+	position: absolute;
+	bottom: -3px;
+}
+#progressBar{
+	width: 100%;
+	height: 6px;
+	position: relative;
+	cursor: pointer;
+}
+#progress{
+	display: inline-block;
+	height: 100%;
+	position: absolute;
+	left: 0;
+	background: rgba(0, 0, 0, .7);
+	cursor: pointer;
+}
+#progressIndicator{
+	width: 100%;
+	height: 100%;
+	display: block;
+	background: #088a29;
+	position: relative;
+	cursor: pointer;
+}
+#progressCursor{
+	display: inline-block;
+	height: 100%;
+	width: 7px; /* odd for centering on cursor */
+	position: absolute;
+	background: #fff;
+	border: 2px solid #000;
+	border-radius: 99px;
+	top: -2px;
+	right: -5px;
+	cursor: pointer;
+	z-index: 101;
+}
+#progressCursor:active{
+	cursor: pointer;
+}
+#progressCursor:hover{
+	height: 150%;
+	width: 13px;
+	right: -9px;
+	top: -5px;
+	border-width: 4px;
+}
+.commentPip{
+	width: 8px;
+	height: 100%;
+	background: #b4fa6f;
+	position: absolute;
+	cursor: pointer;
+	outline: 1px solid #666;
+}
+.commentPipHover{
+	background: #dbdb82;
+	position: absolute;
+	padding: 5px;
+	border-radius: 3px;
+	top: 15px;
+	z-index: 100;
+}
+#divider{
+	height: 100%;
+	width: 2px;
+	background: #eee;
+	border-left: 1px solid #e8e8e8;
+	border-right: 1px solid #e8e8e8;
+	border-radius: 1px;
+	position: absolute;
+	top: 0;
+	right: 143px;
+	z-index: 100;
+	cursor: grab;
+	cursor: -moz-grab;
+	cursor: -webkit-grab;
+	box-shadow: 0px 0px 6px 1px #97b5c0;
+}
+#divider:active{
+	cursor: grabbing;
+	cursor: -moz-grabbing;
+	cursor: -webkit-grabbing;
+}
+#rollingComments{
+	background: #ddd;
+	width: 124px;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	right: 0;
+	text-align: left;
+	font-size: 12px;
+	padding: 5px;
+	text-align: left;
+	overflow: hidden;
+}
+#rollingComments-shadow-top, #rollingComments-shadow-bottom{
+	position: absolute;
+	left: 0;
+	width: 100%;
+	height: 70px;
+}
+#rollingComments-shadow-top{
+	top: 0;
+	background: -moz-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(255,255,255,0)));
+	background: -webkit-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%);
+	background: -o-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%);
+	background: -ms-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%);
+	background: linear-gradient(to bottom, rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#00ffffff',GradientType=0 );
+}
+#rollingComments-shadow-bottom{
+	background: -moz-linear-gradient(bottom, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);
+	background: -webkit-gradient(linear, left bottom, left top, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(255,255,255,0)));
+	background: -webkit-linear-gradient(bottom, rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%);
+	background: -o-linear-gradient(bottom, rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%);
+	background: -ms-linear-gradient(bottom, rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%);
+	background: linear-gradient(to top, rgba(255,255,255,1) 0%,rgba(255,255,255,0) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#ffffff',GradientType=0 );
+	bottom: 0;
+}
+#rollingComments-holder{
+	height: 100%;
+	position: relative;
+	top: 50%;
+}
+.rollingComment{
+	border-top: 1px solid #bbb;
+	padding: 10px 0;
+	cursor: pointer;
+}
+.rollingComment:hover{
+	text-shadow: 0 0 8px #000;
+}
+.rollingComment:first-child{
+	border: 0px;
+}
+
+
+#commentTime, .commentLeftBlock{
+	display: inline-block;
+	width: 100px;
+	height: 20px;
+	font-size: 16px;
+	padding-top: 2px;
+	padding-left: 5px;
+	padding-right: 5px;
+	margin-right: 20px;
+	background: #e6e6ff;
+	float: left;
+	text-align: center;
+}
+#commentTime{
+	float: right;
+}
+#commentArea{
+	width: 700px;
+	height: 200px;
+	padding: 5px;
+	float: right;
+}
+.comment{
+	float: left;
+	width: 100%;
+	padding: 10px 0;
+	border-top: 1px solid #333;
+}
+.commentLeftBlock{
+	background: #ccf;
+	height: 55px;
+}
+.commentTimeListItem, .commentDateListItem{
+	margin: 5px;
+}
+.commentListItem{
+	float: left;
+	text-align: left;
+}
+.commentJump{
+	padding: 3px 10px;
+	margin: 0 20px;
+	background: #ccc;
+	cursor: pointer;
+	float: right;
+}
+.clearfix{
+	clear: both;
+}
