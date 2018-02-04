@@ -10,4 +10,5 @@ script:
     - bazel build //...
 
 deploy:
-    - bazel run deploy_site
+    provider: script
+    script: bazel run deploy_site
