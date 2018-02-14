@@ -21,3 +21,23 @@ github_repository(
 
 load("@rules_web//:rules_web_repositories.bzl", "rules_web_repositories")
 rules_web_repositories()
+
+github_repository(
+    name = "build_bazel_rules_nodejs",
+    user = "bazelbuild",
+    project = "rules_nodejs",
+    tag = "0.4.1",
+    sha256 = "7908b393219be6e40b06a726b72d6e8969202d1ba436a1bbd142be6038f8541d",
+)
+load("@build_bazel_rules_nodejs//:defs.bzl", "node_repositories")
+node_repositories(package_json = ["//:package.json"])
+
+github_repository(
+    name = "build_bazel_rules_typescript",
+    user = "bazelbuild",
+    project = "rules_typescript",
+    tag = "0.10.1",
+    sha256 = "aa2dc2e4e74e642a0009e3d68c1ba33eb75cdb2a17623f338071f8bc1be09d88",
+)
+load("@build_bazel_rules_typescript//:defs.bzl", "ts_setup_workspace")
+ts_setup_workspace()

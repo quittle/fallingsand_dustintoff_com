@@ -29,6 +29,10 @@ load("@rules_web//deploy:deploy.bzl",
     "deploy_site_zip_s3_script",
 )
 
+load("@build_bazel_rules_typescript//:defs.bzl",
+    "ts_library",
+)
+
 minify_png(
     name = "droplet_png",
     png = "Grow/images/droplet.png",
@@ -155,4 +159,19 @@ deploy_site_zip_s3_script(
     content_types = {
         "grw": "text/xml",
     },
+)
+
+ts_library(
+    name = "sample",
+    srcs = [ "sample.ts" ],
+    tsconfig = "tsconfig.json",
+)
+
+filegroup(
+    name = "node_modules",
+    srcs = glob([
+        "node_modules/**/*.js",
+        "node_modules/**/*.d.ts",
+        "node_modules/**/*.json",
+    ])
 )

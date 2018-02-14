@@ -7,7 +7,8 @@ before_install:
     - ./travis/before_install.sh
 
 script:
-    - bazel build //...
+    - bazel run @yarn//:yarn
+    - bazel build ...
 
 deploy:
     provider: script
