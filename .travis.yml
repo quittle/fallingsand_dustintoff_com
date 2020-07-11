@@ -1,3 +1,5 @@
+dist: bionic
+
 env:
     - BAZEL_VERSION='3.3.0'
 
