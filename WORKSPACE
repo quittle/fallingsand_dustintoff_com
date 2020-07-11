@@ -27,9 +27,9 @@ github_repository(
 
 github_repository(
     name = "rules_web",
-    commit = "11b53abff8d11a3a44132b1a3aecf3723a497eb6",
+    commit = "73e6dd80535bb622aa69174613ae58a50b79fd9b",
     project = "rules_web",
-    sha256 = "dbf394061e1db91d6690c32e2f57a2079256cabbb547ea894475d519f9fd558d",
+    sha256 = "dd0f628a9a4d3acd43ea4cd426cd3d4fefd649dc4098e58b0f863c9d6ccea05d",
     user = "quittle",
 )
 
