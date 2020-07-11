@@ -1,5 +1,5 @@
 env:
-    - BAZEL_VERSION='0.10.0'
+    - BAZEL_VERSION='3.3.0'
 
 sudo: true
 
@@ -7,7 +7,6 @@ before_install:
     - ./travis/before_install.sh
 
 script:
-    - bazel run @yarn//:yarn
     - bazel build ...
 
 deploy:

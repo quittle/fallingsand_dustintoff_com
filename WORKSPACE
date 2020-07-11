@@ -1,43 +1,64 @@
 # Copyright (c) 2018 Dustin Toff
 # Licensed under Apache License v2.0
 
-workspace(name = "fallingsand_dustindoff_com")
+workspace(
+    name = "fallingsand_dustindoff_com",
+    managed_directories = {"@npm": ["node_modules"]},
+)
+
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
 git_repository(
     name = "bazel_repository_toolbox",
-    remote = "https://github.com/quittle/bazel_repository_toolbox.git",
-    commit = "dfffafc08ec40df1b5ef1fbe0fbe77e643f6c672",
+    commit = "b7d32c04cb993267606a188cc4c55be3b6b5c564",
+    remote = "https://github.com/quittle/bazel_repository_toolbox",
+    shallow_since = "1593401847 +0100",
 )
 
 load("@bazel_repository_toolbox//:github_repository.bzl", "github_repository")
 
 github_repository(
-    name = "rules_web",
-    user = "quittle",
-    project = "rules_web",
-    commit = "a45f5a194b8830cc2deea0a056285f780fd29eb3",
-    sha256 = "170bbd2ccf7310f08c3bdc0ca59285b05ec989458ca307fa32d545063be3bfd9",
+    name = "build_bazel_rules_nodejs",
+    project = "rules_nodejs",
+    sha256 = "e1a3b4f74619cfb2e357d1170312ba5105e6730d929db3c4053c7c3156847d99",
+    tag = "1.7.0",
+    user = "bazelbuild",
 )
-
-load("@rules_web//:rules_web_repositories.bzl", "rules_web_repositories")
-rules_web_repositories()
 
 github_repository(
-    name = "build_bazel_rules_nodejs",
-    user = "bazelbuild",
-    project = "rules_nodejs",
-    tag = "0.4.1",
-    sha256 = "7908b393219be6e40b06a726b72d6e8969202d1ba436a1bbd142be6038f8541d",
+    name = "rules_web",
+    commit = "11b53abff8d11a3a44132b1a3aecf3723a497eb6",
+    project = "rules_web",
+    sha256 = "dbf394061e1db91d6690c32e2f57a2079256cabbb547ea894475d519f9fd558d",
+    user = "quittle",
 )
-load("@build_bazel_rules_nodejs//:defs.bzl", "node_repositories")
+
+load("@rules_web//:rules_web_deps_1.bzl", "rules_web_dependencies")
+
+rules_web_dependencies()
+
+load("@rules_web//:rules_web_deps_2.bzl", "rules_web_dependencies")
+
+rules_web_dependencies()
+
+load("@rules_web//:rules_web_deps_3.bzl", "rules_web_dependencies")
+
+rules_web_dependencies()
+
+load("@build_bazel_rules_nodejs//:index.bzl", "node_repositories", "npm_install")
+
 node_repositories(package_json = ["//:package.json"])
 
-github_repository(
-    name = "build_bazel_rules_typescript",
-    user = "bazelbuild",
-    project = "rules_typescript",
-    tag = "0.10.1",
-    sha256 = "aa2dc2e4e74e642a0009e3d68c1ba33eb75cdb2a17623f338071f8bc1be09d88",
+npm_install(
+    name = "npm",
+    package_json = "//:package.json",
+    package_lock_json = "//:package-lock.json",
 )
-load("@build_bazel_rules_typescript//:defs.bzl", "ts_setup_workspace")
+
+load("@npm//:install_bazel_dependencies.bzl", "install_bazel_dependencies")
+
+install_bazel_dependencies()
+
+load("@npm_bazel_typescript//:index.bzl", "ts_setup_workspace")
+
 ts_setup_workspace()
