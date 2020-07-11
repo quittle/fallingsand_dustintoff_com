@@ -95,8 +95,8 @@ resource_map(
 closure_compile(
     name = "fallingsand_js",
     srcs = [
-        "grow.js",
         ":fallingsand_resource_map",
+        "grow.js",
     ],
     compilation_level = "ADVANCED",
 )
