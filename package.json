@@ -1,7 +1,9 @@
 {
     "scripts": {
         "dev": "vite",
-        "wasm-pack": "wasm-pack build rust --target bundler"
+        "wasm-pack": "wasm-pack build rust --target bundler",
+        "format-check": "prettier . --check",
+        "format": "prettier . --write"
     },
     "devDependencies": {
         "hello-wasm": "file:rust/pkg",
