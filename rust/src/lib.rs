@@ -9,6 +9,11 @@ use js::drawRect;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
+pub fn tick() {
+    console_log!("Ticking!");
+}
+
+#[wasm_bindgen]
 pub fn init(rows: GridPos, cols: GridPos, canvas_width: CanvasSize, canvas_height: CanvasSize) {
     console_error_panic_hook::set_once();
 
