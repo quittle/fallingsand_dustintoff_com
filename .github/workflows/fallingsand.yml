@@ -1,22 +1,22 @@
 name: Fallingsand CI
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    push:
+        branches: ["main"]
+    pull_request:
+        branches: ["main"]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+    build:
+        runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-    - name: Setup NodeJS
-      uses: actions/setup-node@v3
-      with:
-        node-version-file: '.nvmrc'
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run release
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+            - name: Setup NodeJS
+              uses: actions/setup-node@v3
+              with:
+                  node-version-file: ".nvmrc"
+                  cache: "npm"
+            - run: npm ci
+            - run: npm run release
