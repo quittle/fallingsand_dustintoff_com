@@ -1,5 +1,3 @@
-// import { init,  } from "hello-wasm";
-
 const canvas = document.getElementsByTagName("canvas")[0];
 const ctx = canvas.getContext("2d");
 
@@ -18,6 +16,6 @@ export function initRust() {
     return function init(i) {
         console.log("Initializing rust", i);
         i(canvas.height, canvas.width, canvas.width, canvas.height);
-        // console.log("1 + 2 = " + add(1, 2));
+        console.log("1 + 2 = " + add(1, 2));
     };
 }
