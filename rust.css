@@ -1,0 +1,10 @@
+body {
+    display: flex;
+    align-items: center;
+}
+
+canvas {
+    width: 100%;
+    aspect-ratio: 3 / 1;
+    background: grey;
+}

@@ -14,4 +14,11 @@ export default {
     worker: {
         plugins: [wasm(), topLevelAwait()],
     },
+    build: {
+        rollupOptions: {
+            input: {
+                main: "rust.html",
+            },
+        },
+    },
 };

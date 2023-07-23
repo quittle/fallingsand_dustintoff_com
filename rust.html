@@ -1,6 +1,16 @@
-<script type="module">
-    import { greet, add } from "hello-wasm";
+<link rel="stylesheet" href="rust.css" />
 
-    greet("WebAssembly");
-    document.write("1 + 2 = " + add(1, 2));
+<canvas width="1000" height="333"></canvas>
+
+<script type="module">
+    import { initRust } from "./rust.js";
+
+    window.i = initRust();
+</script>
+<script type="module">
+    import { init, add } from "hello-wasm";
+    window.i(init);
+
+    // console.log("1 + 2 = " + add(1, 2));
+    // init(30, 30);
 </script>

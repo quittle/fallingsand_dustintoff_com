@@ -1,13 +1,34 @@
+mod grain;
+mod grid;
+mod js;
+
+use console_error_panic_hook;
+use grid::{with_grid, CanvasSize, GridPos};
+
+use js::drawRect;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
-extern "C" {
-    pub fn alert(s: &str);
-}
+pub fn init(rows: GridPos, cols: GridPos, canvas_width: CanvasSize, canvas_height: CanvasSize) {
+    console_error_panic_hook::set_once();
 
-#[wasm_bindgen]
-pub fn greet(name: &str) {
-    alert(&format!("Hello2 again, {}!", name));
+    let cell_size = canvas_width / cols;
+    assert_eq!(
+        cell_size,
+        canvas_height / rows,
+        "Num of cols and rows does not form a perfect grid"
+    );
+    let cell_size = cell_size * 5;
+    with_grid(|grid| {
+        grid.resize(rows, cols, canvas_width, canvas_height);
+        for r in 0..rows {
+            for c in 0..cols {
+                if (r + c) % 2 == 0 {
+                    drawRect(c * cell_size, r * cell_size, cell_size, cell_size);
+                }
+            }
+        }
+    });
 }
 
 #[wasm_bindgen]

@@ -1,9 +1,15 @@
 {
     "scripts": {
         "dev": "vite",
+        "build": "vite build",
         "wasm-pack": "wasm-pack build rust --target bundler",
-        "format-check": "prettier . --check",
-        "format": "prettier . --write"
+        "prettier-check": "prettier . --check",
+        "prettier": "prettier . --write",
+        "cargo-fmt-check": "cd rust && cargo fmt --all --check",
+        "cargo-fmt": "cd rust && cargo fmt --all",
+        "format-check": "npm run prettier-check && npm run cargo-fmt-check",
+        "format": "npm run prettier && npm run cargo-fmt",
+        "release": "npm run format && npm run build"
     },
     "devDependencies": {
         "hello-wasm": "file:rust/pkg",
