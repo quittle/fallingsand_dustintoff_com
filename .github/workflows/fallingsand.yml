@@ -18,5 +18,7 @@ jobs:
               with:
                   node-version-file: ".nvmrc"
                   cache: "npm"
+            - name: Setup Rust
+              run: rustup set profile default
             - run: npm ci
             - run: npm run release
