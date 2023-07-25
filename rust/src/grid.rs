@@ -1,5 +1,4 @@
 use std::{
-    cell::RefCell,
     cmp::{max, min},
     collections::HashMap,
     mem::size_of,
@@ -8,17 +7,6 @@ use std::{
 use crate::static_assert;
 
 use super::grain::Grain;
-
-thread_local! {
-    pub static GRID: RefCell<Grid> = RefCell::new(Grid::new());
-}
-
-pub fn with_grid<T, F: FnOnce(&mut Grid) -> T>(func: F) -> T {
-    GRID.with(|grid| {
-        let mut grid = grid.borrow_mut();
-        func(&mut grid)
-    })
-}
 
 pub type GridPos = u16;
 pub type CanvasSize = u16;
@@ -33,16 +21,6 @@ pub struct Grid {
 }
 
 impl Grid {
-    pub fn new() -> Self {
-        Self {
-            rows: 0,
-            cols: 0,
-            canvas_width: 0,
-            canvas_height: 0,
-            cells: HashMap::new(),
-        }
-    }
-
     pub fn resize(
         &mut self,
         rows: GridPos,
