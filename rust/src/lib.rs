@@ -6,7 +6,7 @@ mod texture;
 mod utils;
 
 use color::Color;
-use console_error_panic_hook;
+
 use grain::Grain;
 use grid::{with_grid, CanvasSize, Grid, GridPos};
 
@@ -14,17 +14,17 @@ use js::{fill_rect, stroke_rect};
 use wasm_bindgen::prelude::wasm_bindgen;
 
 #[wasm_bindgen]
-pub fn tick() {
+pub fn tick(_delta: f64) {
     with_grid(|grid| {
         draw_border(grid);
         let cell_size = grid.cell_size();
-        for ((x, y), grain) in &grid.cells {
+        for ((x, y), grain) in grid.cells() {
             fill_rect(
                 x * cell_size,
                 y * cell_size,
                 cell_size,
                 cell_size,
-                Color::from(grain.texture().into()).into(),
+                Into::<Color>::into(grain.texture()).into(),
             );
         }
     });

@@ -1,3 +1,4 @@
+import { setRepeatedRequestAnimationFrameCallback } from "./animation";
 import * as rustLib from "./rust-lib";
 
 export async function initRust() {
@@ -27,7 +28,7 @@ export async function initRust() {
     onCanvasResize(canvas);
     canvas.addEventListener("click", (e) => on_click(e.offsetX, e.offsetY));
 
-    setInterval(tick, 10);
+    setRepeatedRequestAnimationFrameCallback(tick);
 }
 
 await initRust();

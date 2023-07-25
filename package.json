@@ -7,10 +7,12 @@
         "prettier": "prettier . --write",
         "cargo-fmt-check": "cd rust && cargo fmt --all --check",
         "cargo-fmt": "cd rust && cargo fmt --all",
+        "clippy-check": "cd rust && cargo clippy --all-targets --all-features -- -D warnings",
+        "clippy": "cd rust && cargo clippy --fix --allow-dirty --allow-staged",
         "format-check": "npm run prettier-check && npm run cargo-fmt-check",
-        "format": "npm run prettier && npm run cargo-fmt",
+        "format": "npm run prettier && npm run clippy && npm run cargo-fmt",
         "type-check": "tsc --noEmit",
-        "release": "npm run format-check && && npm run type-check && npm run build"
+        "release": "npm run format-check && npm run clippy-check && npm run type-check && npm run build"
     },
     "devDependencies": {
         "hello-wasm": "file:rust/pkg",

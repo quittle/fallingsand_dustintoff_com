@@ -29,7 +29,7 @@ pub struct Grid {
     pub cols: GridPos,
     pub canvas_width: CanvasSize,
     pub canvas_height: CanvasSize,
-    pub cells: HashMap<(GridPos, GridPos), Grain>,
+    cells: HashMap<(GridPos, GridPos), Grain>,
 }
 
 impl Grid {
@@ -86,5 +86,9 @@ impl Grid {
 
         self.cells.insert(pos, grain);
         true
+    }
+
+    pub fn cells(&self) -> impl Iterator<Item = (&(GridPos, GridPos), &Grain)> {
+        self.cells.iter()
     }
 }
