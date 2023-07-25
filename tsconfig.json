@@ -1,3 +1,10 @@
 {
-    "compilerOptions": {}
+    "compilerOptions": {
+        "module": "ESNext",
+        "target": "esnext",
+        "moduleResolution": "NodeNext",
+        "paths": {
+            "hello-wasm": ["./rust/pkg"]
+        }
+    }
 }
