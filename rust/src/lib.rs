@@ -1,53 +1,87 @@
+mod color;
 mod grain;
 mod grid;
 mod js;
+mod texture;
+mod utils;
 
+use color::Color;
 use console_error_panic_hook;
-use grid::{with_grid, CanvasSize, GridPos};
+use grain::Grain;
+use grid::{with_grid, CanvasSize, Grid, GridPos};
 
-use js::drawRect;
-use wasm_bindgen::prelude::*;
+use js::{fill_rect, stroke_rect};
+use wasm_bindgen::prelude::wasm_bindgen;
 
 #[wasm_bindgen]
 pub fn tick() {
-    console_log!("Ticking!");
+    with_grid(|grid| {
+        draw_border(grid);
+        let cell_size = grid.cell_size();
+        for ((x, y), grain) in &grid.cells {
+            fill_rect(
+                x * cell_size,
+                y * cell_size,
+                cell_size,
+                cell_size,
+                Color::from(grain.texture().into()).into(),
+            );
+        }
+    });
+}
+
+#[wasm_bindgen]
+pub fn on_click(canvas_x: CanvasSize, canvas_y: CanvasSize) {
+    with_grid(|grid| {
+        let cell_size = grid.cell_size();
+        let x = canvas_x / cell_size;
+        let y = canvas_y / cell_size;
+        grid.add(x, y, Grain::Sand);
+    });
 }
 
 #[wasm_bindgen]
 pub fn init(rows: GridPos, cols: GridPos, canvas_width: CanvasSize, canvas_height: CanvasSize) {
     console_error_panic_hook::set_once();
 
-    let cell_size = canvas_width / cols;
-    assert_eq!(
-        cell_size,
-        canvas_height / rows,
-        "Num of cols and rows does not form a perfect grid"
-    );
-    let cell_size = cell_size * 5;
     with_grid(|grid| {
         grid.resize(rows, cols, canvas_width, canvas_height);
-        for r in 0..rows {
-            for c in 0..cols {
-                if (r + c) % 2 == 0 {
-                    drawRect(c * cell_size, r * cell_size, cell_size, cell_size);
-                }
-            }
-        }
+        draw_border(grid);
+        // let cell_size = grid.cell_size();
+        // for r in 0..rows {
+        //     for c in 0..cols {
+        //         if (r + c) % 2 == 0 {
+        //             drawRect(c * cell_size, r * cell_size, cell_size, cell_size);
+        //         }
+        //     }
+        // }
     });
 }
 
-#[wasm_bindgen]
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
+fn draw_border(grid: &Grid) {
+    stroke_rect(
+        1,
+        1,
+        grid.cols * grid.cell_size() - 1,
+        grid.rows * grid.cell_size() - 1,
+        Color::BLACK.into(),
+    );
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+#[wasm_bindgen]
+pub fn on_canvas_resize(canvas_width: CanvasSize, canvas_height: CanvasSize) {
+    with_grid(|grid| {
+        grid.resize(grid.rows, grid.cols, canvas_width, canvas_height);
+    });
+}
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+#[macro_export]
+macro_rules! static_assert {
+    ($cond:expr) => {{
+        const fn _static_assert() {
+            assert!($cond);
+        }
+
+        const _: () = _static_assert();
+    }};
 }

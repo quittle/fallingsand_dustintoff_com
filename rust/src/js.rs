@@ -17,5 +17,21 @@ macro_rules! console_log {
 
 #[wasm_bindgen(js_namespace = rustLib)]
 extern "C" {
-    pub fn drawRect(x: CanvasSize, y: CanvasSize, width: CanvasSize, height: CanvasSize);
+    #[wasm_bindgen(js_name = "fillRect")]
+    pub fn fill_rect(
+        x: CanvasSize,
+        y: CanvasSize,
+        width: CanvasSize,
+        height: CanvasSize,
+        color: u32,
+    );
+
+    #[wasm_bindgen(js_name = "strokeRect")]
+    pub fn stroke_rect(
+        x: CanvasSize,
+        y: CanvasSize,
+        width: CanvasSize,
+        height: CanvasSize,
+        color: u32,
+    );
 }
