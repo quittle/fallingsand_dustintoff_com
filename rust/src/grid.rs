@@ -17,9 +17,11 @@ pub struct Grid {
     pub cols: GridPos,
     pub canvas_width: CanvasSize,
     pub canvas_height: CanvasSize,
-    cells: HashMap<(GridPos, GridPos), Grain>,
+    state_first: bool,
+    cells: HashMap<(GridPos, GridPos), (Grain, Grain)>,
 }
 
+#[allow(dead_code)]
 impl Grid {
     pub fn resize(
         &mut self,
@@ -62,11 +64,64 @@ impl Grid {
             return false;
         }
 
-        self.cells.insert(pos, grain);
+        self.cells.insert(pos, (grain, grain));
         true
     }
 
-    pub fn cells(&self) -> impl Iterator<Item = (&(GridPos, GridPos), &Grain)> {
-        self.cells.iter()
+    pub fn set(&mut self, x: GridPos, y: GridPos, grain: Grain) {
+        if x >= self.rows || y >= self.cols {
+            return;
+        }
+
+        let pos = (x, y);
+        if let Some(entries) = self.cells.get_mut(&pos) {
+            if self.state_first {
+                entries.1 = grain;
+            } else {
+                entries.0 = grain;
+            }
+        } else if !matches!(grain, Grain::Empty) {
+            self.cells.insert(pos, self.new_next_grain_pair(grain));
+        }
+    }
+
+    pub fn clear(&mut self, x: GridPos, y: GridPos) {
+        self.set(x, y, Grain::Empty);
+    }
+
+    fn new_next_grain_pair(&self, grain: Grain) -> (Grain, Grain) {
+        if self.state_first {
+            (Grain::Empty, grain)
+        } else {
+            (grain, Grain::Empty)
+        }
+    }
+
+    pub fn is_empty(&self, x: GridPos, y: GridPos) -> bool {
+        if let Some((a, b)) = self.cells.get(&(x, y)) {
+            if self.state_first {
+                matches!(a, Grain::Empty)
+            } else {
+                matches!(b, Grain::Empty)
+            }
+        } else {
+            true
+        }
+    }
+
+    pub fn cur_cells(&self) -> impl Iterator<Item = (&(GridPos, GridPos), &Grain)> {
+        self.cells
+            .iter()
+            .map(|(pos, (a, b))| (pos, if self.state_first { a } else { b }))
+    }
+
+    pub fn cells(&self) -> impl Iterator<Item = ((GridPos, GridPos), (Grain, Grain))> + '_ {
+        self.cells
+            .iter()
+            .map(|(pos, (a, b))| (*pos, if self.state_first { (*a, *b) } else { (*b, *a) }))
+    }
+
+    pub fn flip(&mut self) {
+        self.state_first = !self.state_first;
     }
 }

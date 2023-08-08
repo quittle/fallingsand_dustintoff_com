@@ -1,5 +1,8 @@
 import { setRepeatedRequestAnimationFrameCallback } from "./animation";
 import * as rustLib from "./rust-lib";
+import { setupCanvas } from "./webgl";
+
+const RUN_WASM = false;
 
 export async function initRust() {
     window["rustLib"] = rustLib;
@@ -8,27 +11,30 @@ export async function initRust() {
         "hello-wasm"
     );
     const canvas = rustLib.canvas;
-
-    function onCanvasResize(canvas: HTMLCanvasElement) {
-        const { width, height } = canvas.getBoundingClientRect();
-        canvas.width = width;
-        canvas.height = height;
-        on_canvas_resize(width, height);
-    }
-
-    const resizeObserver = new ResizeObserver((entries) => {
-        for (const entry of entries) {
-            onCanvasResize(entry.target as HTMLCanvasElement);
+    if (RUN_WASM) {
+        function onCanvasResize(canvas: HTMLCanvasElement) {
+            const { width, height } = canvas.getBoundingClientRect();
+            canvas.width = width;
+            canvas.height = height;
+            on_canvas_resize(width, height);
         }
-    });
-    resizeObserver.observe(canvas);
 
-    init(10, 10, canvas.width, canvas.height);
+        const resizeObserver = new ResizeObserver((entries) => {
+            for (const entry of entries) {
+                onCanvasResize(entry.target as HTMLCanvasElement);
+            }
+        });
+        resizeObserver.observe(canvas);
 
-    onCanvasResize(canvas);
-    canvas.addEventListener("click", (e) => on_click(e.offsetX, e.offsetY));
+        init(10, 10, canvas.width, canvas.height);
 
-    setRepeatedRequestAnimationFrameCallback(tick);
+        onCanvasResize(canvas);
+        canvas.addEventListener("click", (e) => on_click(e.offsetX, e.offsetY));
+
+        setRepeatedRequestAnimationFrameCallback(tick);
+    } else {
+        setupCanvas(canvas);
+    }
 }
 
 await initRust();

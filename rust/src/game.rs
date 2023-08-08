@@ -43,13 +43,24 @@ impl Game {
         self.grid.add(x, y, Grain::Sand);
     }
 
-    pub fn tick(&self) {}
+    pub fn tick(&mut self) {
+        for ((x, y), (cur, _next)) in self.grid.cells() {
+            let (dx, dy) = cur.tick_movement();
+            let new_x = x + dx;
+            let new_y = y + dy;
+            if self.grid.is_empty(new_x, new_y) {
+                // self.grid.clear(x, y);
+                // self.grid.set(new_x, new_y, cur);
+            }
+        }
+        self.grid.flip();
+    }
 
     pub fn draw(&self) {
         self.draw_border();
 
         let cell_size = self.grid.cell_size();
-        for ((x, y), grain) in self.grid.cells() {
+        for ((x, y), grain) in self.grid.cur_cells() {
             fill_rect(
                 x * cell_size,
                 y * cell_size,
