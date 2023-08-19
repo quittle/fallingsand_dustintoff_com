@@ -57,7 +57,7 @@ function getUpdateShaders(): ShaderInfos {
                 varying vec2 aPosition;
                 
                 void main() {
-                    gl_Position = vec4(aVertexPosition.x, aVertexPosition.y, 0, 1);;
+                    gl_Position = vec4(aVertexPosition.x, aVertexPosition.y, 0, 1);
                     
                     vec2 newPos = aVertexPosition * 2.0;
                     if (aVertexPosition.y < -1.0) {
@@ -74,17 +74,32 @@ function getUpdateShaders(): ShaderInfos {
         fragment: {
             source: `
                 precision highp float;
+                precision highp int;
+
                 varying vec2 aPosition;
+
+                uniform sampler2D uPrevState;
+                uniform int uWidth, uHeight;
+                uniform ivec2 uNewPixel;
 
                 vec2 clipVecToPositive(vec2 position) {
                     return (position + vec2(1.0, 1.0)) / 2.0;
                 }
 
                 void main() {
-                    gl_FragColor = vec4(clipVecToPositive(aPosition).xy, 0.5, 1);
+                    vec2 pos = clipVecToPositive(aPosition);
+                    ivec2 iPos = ivec2(int(pos.x * float(uWidth)), int(pos.y * float(uHeight)));
+
+                    if (iPos == uNewPixel) {
+                        gl_FragColor = vec4(1, 0, 0, 1);
+                    } else {
+                        vec4 color = texture2D(uPrevState, vec2(pos.x, pos.y - (1.0 / float(uHeight))));
+                        
+                        gl_FragColor = vec4(color.r + 0.01, 0, 0.5, 1);
+                    }
                 }
             `,
-            uniformNames: [],
+            uniformNames: ["uPrevState", "uWidth", "uHeight", "uNewPixel"],
             uniformLocations: {},
             attributeNames: ["aPosition"],
             attributeLocations: {},
@@ -135,7 +150,7 @@ function oneTimeSetup(gl: WebGLRenderingContext): ProgramSetup {
         gl,
         [1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, -1.0],
     );
-    const sandBuffer = createColorBuffer(
+    const sandBuffer = createColorTexture(
         gl,
         "sandBuffer",
         gl.canvas.width,
@@ -195,8 +210,46 @@ function updateBuffer(
         level,
     );
 
+    // Copy buffers
+    const copyTexture = createColorTexture(
+        gl,
+        "copyTexture",
+        gl.canvas.width,
+        gl.canvas.height,
+    );
+
     gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, colorBuffer);
+    gl.bindTexture(gl.TEXTURE_2D, copyTexture);
+
+    gl.copyTexImage2D(
+        gl.TEXTURE_2D,
+        level,
+        gl.RGBA,
+        0,
+        0,
+        gl.canvas.width,
+        gl.canvas.height,
+        0,
+    );
+
+    gl.uniform1i(
+        setup.updateShaders.fragment.uniformLocations["uPrevState"],
+        0,
+    );
+
+    gl.uniform1i(
+        setup.updateShaders.fragment.uniformLocations["uWidth"],
+        gl.canvas.width,
+    );
+    gl.uniform1i(
+        setup.updateShaders.fragment.uniformLocations["uHeight"],
+        gl.canvas.height,
+    );
+    gl.uniform2i(
+        setup.updateShaders.fragment.uniformLocations["uNewPixel"],
+        0,
+        0,
+    );
 
     const vertexBuffer = createVertexBuffer(
         gl,
@@ -239,6 +292,7 @@ function updateBuffer(
     // gl.drawArrays(gl.LINE_STRIP, offset, vertexCount);
 
     gl.deleteBuffer(vertexBuffer);
+    gl.deleteTexture(copyTexture);
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.deleteFramebuffer(fb);
 }
@@ -272,7 +326,7 @@ function renderFrame(
     }
 }
 
-function createColorBuffer(
+function createColorTexture(
     gl: WebGLRenderingContext,
     name: string,
     width: number,
