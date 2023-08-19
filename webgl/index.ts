@@ -4,43 +4,19 @@ import "webgl-lint";
 import { ProgramSetup, ShaderInfos } from "./types";
 import { buildShaderProgram, tagObject } from "./utils";
 import { setRepeatedRequestAnimationFrameCallback } from "../animation";
+import { renderVs, renderFs, updateVs, updateFs } from "./shaders";
 
 function getShaders(): ShaderInfos {
     return {
         vertex: {
-            source: `
-                attribute vec4 aVertexPosition;
-
-                varying vec2 aPosition;
-                
-                void main() {
-                    gl_Position = vec4(aVertexPosition.x, aVertexPosition.y, 0, 1);
-                    aPosition = vec2(aVertexPosition.x, aVertexPosition.y);
-                }
-            `,
+            source: renderVs,
             uniformNames: [],
             uniformLocations: {},
             attributeNames: ["aVertexPosition"],
             attributeLocations: {},
         },
         fragment: {
-            source: `
-                precision highp float;
-
-                uniform sampler2D u_texture;
-                varying vec2 aPosition;
-
-                vec2 clipVecToPositive(vec2 position) {
-                    return (position + vec2(1.0, 1.0)) / 2.0;
-                }
-
-                void main() {
-                    gl_FragColor = texture2D(u_texture, clipVecToPositive(aPosition));
-                    if (aPosition.x < -1.0 || aPosition.x > 1.0 || aPosition.y < -1.0 || aPosition.y > 1.0) {
-                        gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
-                    }
-                }
-            `,
+            source: renderFs,
             uniformNames: ["u_texture"],
             uniformLocations: {},
             attributeNames: ["aPosition"],
@@ -52,59 +28,14 @@ function getShaders(): ShaderInfos {
 function getUpdateShaders(): ShaderInfos {
     return {
         vertex: {
-            source: `
-                attribute vec2 aVertexPosition;
-
-                varying vec2 aPosition;
-                
-                void main() {
-                    gl_Position = vec4(aVertexPosition.x, aVertexPosition.y, 0, 1);
-                    
-                    vec2 newPos = aVertexPosition * 2.0;
-                    if (aVertexPosition.y < -1.0) {
-                        gl_Position = vec4(aVertexPosition.x, 0.0, 0, 1);
-                    }
-                    aPosition = vec2(aVertexPosition.x, aVertexPosition.y);
-                }
-            `,
+            source: updateVs,
             uniformNames: [],
             uniformLocations: {},
             attributeNames: ["aVertexPosition"],
             attributeLocations: {},
         },
         fragment: {
-            source: `
-                precision highp float;
-                precision highp int;
-
-                varying vec2 aPosition;
-
-                uniform sampler2D uPrevState;
-                uniform ivec2 uDimens;
-                uniform ivec2 uNewPixel;
-
-                vec2 clipVecToPositive(vec2 position) {
-                    return (position + vec2(1.0, 1.0)) / 2.0;
-                }
-
-                void main() {
-                    vec2 pos = clipVecToPositive(aPosition);
-                    ivec2 iPos = ivec2(int(pos.x * float(uDimens.x)), int(pos.y * float(uDimens.y)));
-
-                    if (iPos == uNewPixel) {
-                        gl_FragColor = vec4(1, 0, 0, 1);
-                    } else {
-                        vec4 color;
-                        if (iPos.y == 0) {
-                             color = vec4(0.0, 0.0, 0.0, 1.0);
-                        } else {
-                             color = texture2D(uPrevState, vec2(pos.x, pos.y - (1.0 / float(uDimens.y))));
-                        }
-                        
-                        gl_FragColor = vec4(color.rgb, 1);
-                    }
-                }
-            `,
+            source: updateFs,
             uniformNames: ["uPrevState", "uDimens", "uNewPixel"],
             uniformLocations: {},
             attributeNames: ["aPosition"],
