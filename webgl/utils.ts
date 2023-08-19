@@ -65,9 +65,11 @@ export function tagObject(
 
 export function createVertexBuffer(
     gl: WebGLRenderingContext,
+    name: string,
     vertices: number[],
 ): WebGLBuffer {
     const vertexBuffer = gl.createBuffer();
+    tagObject(gl, vertexBuffer, name);
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
     return vertexBuffer;

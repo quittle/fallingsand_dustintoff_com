@@ -61,13 +61,20 @@ export function initialize(gl: WebGLRenderingContext): ProgramSetup {
     };
     const updateProgram = buildProgram(gl, "update", updateShaders);
 
-    const vertexBuffer = createVertexBuffer(
+    const fullClipSpaceVertexBuffer = createVertexBuffer(
         gl,
-        [1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, -1.0],
+        "fullCLipSpaceVertexBuffer",
+        // prettier-ignore
+        [
+            1.0, 1.0,
+            -1.0, 1.0,
+            1.0, -1.0,
+            -1.0, -1.0,
+        ],
     );
-    const sandBuffer = createColorTexture(
+    const stateTexture = createColorTexture(
         gl,
-        "sandBuffer",
+        "stateTexture",
         gl.canvas.width,
         gl.canvas.height,
     );
@@ -76,26 +83,7 @@ export function initialize(gl: WebGLRenderingContext): ProgramSetup {
         displayProgram,
         updateShaders,
         updateProgram,
-        vertexBuffer,
-        sandBuffer,
-        bindVertexBuffer: () => {
-            const numComponents = 2; // pull out 2 values per iteration
-            const type = gl.FLOAT; // the data in the buffer is 32bit floats
-            const normalize = false; // don't normalize
-            const stride = 0; // how many bytes to get from one set of values to the next
-            const offset = 0; // how many bytes inside the buffer to start from
-            gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-            gl.vertexAttribPointer(
-                displayShaders.vertex.attributeLocations["aVertexPosition"],
-                numComponents,
-                type,
-                normalize,
-                stride,
-                offset,
-            );
-            gl.enableVertexAttribArray(
-                displayShaders.vertex.attributeLocations["aVertexPosition"],
-            );
-        },
+        fullClipSpaceVertexBuffer,
+        stateTexture,
     };
 }

@@ -22,7 +22,6 @@ export interface ProgramSetup {
     displayProgram: WebGLProgram;
     updateShaders: ShaderInfos;
     updateProgram: WebGLProgram;
-    vertexBuffer: WebGLBuffer;
-    sandBuffer: WebGLTexture;
-    bindVertexBuffer: () => void;
+    fullClipSpaceVertexBuffer: WebGLBuffer;
+    stateTexture: WebGLTexture;
 }
