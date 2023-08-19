@@ -3,6 +3,7 @@ import "webgl-lint";
 
 import { ProgramSetup, ShaderInfos } from "./types";
 import { buildShaderProgram, tagObject } from "./utils";
+import { setRepeatedRequestAnimationFrameCallback } from "../animation";
 
 function getShaders(): ShaderInfos {
     return {
@@ -79,7 +80,7 @@ function getUpdateShaders(): ShaderInfos {
                 varying vec2 aPosition;
 
                 uniform sampler2D uPrevState;
-                uniform int uWidth, uHeight;
+                uniform ivec2 uDimens;
                 uniform ivec2 uNewPixel;
 
                 vec2 clipVecToPositive(vec2 position) {
@@ -88,18 +89,23 @@ function getUpdateShaders(): ShaderInfos {
 
                 void main() {
                     vec2 pos = clipVecToPositive(aPosition);
-                    ivec2 iPos = ivec2(int(pos.x * float(uWidth)), int(pos.y * float(uHeight)));
+                    ivec2 iPos = ivec2(int(pos.x * float(uDimens.x)), int(pos.y * float(uDimens.y)));
 
                     if (iPos == uNewPixel) {
                         gl_FragColor = vec4(1, 0, 0, 1);
                     } else {
-                        vec4 color = texture2D(uPrevState, vec2(pos.x, pos.y - (1.0 / float(uHeight))));
+                        vec4 color;
+                        if (iPos.y == 0) {
+                             color = vec4(0.0, 0.0, 0.0, 1.0);
+                        } else {
+                             color = texture2D(uPrevState, vec2(pos.x, pos.y - (1.0 / float(uDimens.y))));
+                        }
                         
-                        gl_FragColor = vec4(color.r + 0.01, 0, 0.5, 1);
+                        gl_FragColor = vec4(color.rgb, 1);
                     }
                 }
             `,
-            uniformNames: ["uPrevState", "uWidth", "uHeight", "uNewPixel"],
+            uniformNames: ["uPrevState", "uDimens", "uNewPixel"],
             uniformLocations: {},
             attributeNames: ["aPosition"],
             attributeLocations: {},
@@ -237,17 +243,15 @@ function updateBuffer(
         0,
     );
 
-    gl.uniform1i(
-        setup.updateShaders.fragment.uniformLocations["uWidth"],
+    gl.uniform2i(
+        setup.updateShaders.fragment.uniformLocations["uDimens"],
         gl.canvas.width,
-    );
-    gl.uniform1i(
-        setup.updateShaders.fragment.uniformLocations["uHeight"],
         gl.canvas.height,
     );
+
     gl.uniform2i(
         setup.updateShaders.fragment.uniformLocations["uNewPixel"],
-        0,
+        Math.random() * gl.canvas.width,
         0,
     );
 
@@ -424,9 +428,7 @@ export function setupCanvas(canvas: HTMLCanvasElement) {
 
     const info = oneTimeSetup(gl);
 
-    setInterval(() => {
-        requestAnimationFrame(() => {
-            renderFrame(gl, canvas, info);
-        });
-    }, 100);
+    setRepeatedRequestAnimationFrameCallback(() => {
+        renderFrame(gl, canvas, info);
+    });
 }
