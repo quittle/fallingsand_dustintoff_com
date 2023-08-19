@@ -65,7 +65,7 @@ export function updateFrame(
     gl.uniform2i(
         setup.updateShaders.fragment.uniformLocations["uNewPixel"],
         Math.random() * gl.canvas.width,
-        0,
+        gl.canvas.height - 1,
     );
 
     {
