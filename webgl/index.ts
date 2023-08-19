@@ -1,46 +1,32 @@
 // Enables logging issues to console
 import "webgl-lint";
 
-import { ProgramSetup, ShaderInfos } from "./types";
+import { ProgramSetup, ShaderInfo, ShaderInfos } from "./types";
 import { buildShaderProgram, tagObject } from "./utils";
 import { setRepeatedRequestAnimationFrameCallback } from "../animation";
-import { renderVs, renderFs, updateVs, updateFs } from "./shaders";
+import { displayVs, displayFs, updateVs, updateFs, Shader } from "./shaders";
 
-function getShaders(): ShaderInfos {
+function shaderToShaderInfo(shader: Shader): ShaderInfo {
     return {
-        vertex: {
-            source: renderVs,
-            uniformNames: [],
-            uniformLocations: {},
-            attributeNames: ["aVertexPosition"],
-            attributeLocations: {},
-        },
-        fragment: {
-            source: renderFs,
-            uniformNames: ["u_texture"],
-            uniformLocations: {},
-            attributeNames: ["aPosition"],
-            attributeLocations: {},
-        },
+        source: shader.source,
+        uniformNames: [...(shader.uniforms ?? [])],
+        uniformLocations: {},
+        attributeNames: [...(shader.attributes ?? [])],
+        attributeLocations: {},
+    };
+}
+
+function getDisplayShaders(): ShaderInfos {
+    return {
+        vertex: shaderToShaderInfo(displayVs),
+        fragment: shaderToShaderInfo(displayFs),
     };
 }
 
 function getUpdateShaders(): ShaderInfos {
     return {
-        vertex: {
-            source: updateVs,
-            uniformNames: [],
-            uniformLocations: {},
-            attributeNames: ["aVertexPosition"],
-            attributeLocations: {},
-        },
-        fragment: {
-            source: updateFs,
-            uniformNames: ["uPrevState", "uDimens", "uNewPixel"],
-            uniformLocations: {},
-            attributeNames: ["aPosition"],
-            attributeLocations: {},
-        },
+        vertex: shaderToShaderInfo(updateVs),
+        fragment: shaderToShaderInfo(updateFs),
     };
 }
 
@@ -77,8 +63,8 @@ function oneTimeSetup(gl: WebGLRenderingContext): ProgramSetup {
     gl.depthFunc(gl.LEQUAL); // Near things obscure far things
     gl.lineWidth(1); // For debugging
 
-    const shaders = getShaders();
-    const shaderProgram = buildProgram(gl, "display", shaders);
+    const displayShaders = getDisplayShaders();
+    const displayProgram = buildProgram(gl, "display", displayShaders);
 
     const updateShaders = getUpdateShaders();
     const updateProgram = buildProgram(gl, "update", updateShaders);
@@ -94,8 +80,8 @@ function oneTimeSetup(gl: WebGLRenderingContext): ProgramSetup {
         gl.canvas.height,
     );
     return {
-        shaders,
-        program: shaderProgram,
+        displayShaders,
+        displayProgram,
         updateShaders,
         updateProgram,
         vertexBuffer,
@@ -108,7 +94,7 @@ function oneTimeSetup(gl: WebGLRenderingContext): ProgramSetup {
             const offset = 0; // how many bytes inside the buffer to start from
             gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
             gl.vertexAttribPointer(
-                shaders.vertex.attributeLocations["aVertexPosition"],
+                displayShaders.vertex.attributeLocations["aVertexPosition"],
                 numComponents,
                 type,
                 normalize,
@@ -116,7 +102,7 @@ function oneTimeSetup(gl: WebGLRenderingContext): ProgramSetup {
                 offset,
             );
             gl.enableVertexAttribArray(
-                shaders.vertex.attributeLocations["aVertexPosition"],
+                displayShaders.vertex.attributeLocations["aVertexPosition"],
             );
         },
     };
@@ -248,11 +234,14 @@ function renderFrame(
     setup.bindVertexBuffer();
 
     // Tell WebGL to use our program when drawing
-    gl.useProgram(setup.program);
+    gl.useProgram(setup.displayProgram);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, setup.sandBuffer);
-    gl.uniform1i(setup.shaders.fragment.uniformLocations["u_texture"], 0);
+    gl.uniform1i(
+        setup.displayShaders.fragment.uniformLocations["u_texture"],
+        0,
+    );
 
     {
         const offset = 0;

@@ -18,8 +18,8 @@ export interface ShaderInfos {
 }
 
 export interface ProgramSetup {
-    shaders: ShaderInfos;
-    program: WebGLProgram;
+    displayShaders: ShaderInfos;
+    displayProgram: WebGLProgram;
     updateShaders: ShaderInfos;
     updateProgram: WebGLProgram;
     vertexBuffer: WebGLBuffer;

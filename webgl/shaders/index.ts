@@ -1,13 +1,33 @@
 // @ts-expect-error
-import rvs from "./render.vs?raw";
+import dvs from "./display.vs?raw";
 // @ts-expect-error
-import rfs from "./render.fs?raw";
+import dfs from "./display.fs?raw";
 // @ts-expect-error
 import uvs from "./update.vs?raw";
 // @ts-expect-error
 import ufs from "./update.fs?raw";
 
-export const renderVs = rvs as string;
-export const renderFs = rfs as string;
-export const updateVs = uvs as string;
-export const updateFs = ufs as string;
+export interface Shader {
+    source: string;
+    uniforms?: readonly string[];
+    attributes?: readonly string[];
+}
+
+export const displayVs: Shader = {
+    source: dvs as string,
+    attributes: ["aVertexPosition"],
+};
+export const displayFs: Shader = {
+    source: dfs as string,
+    uniforms: ["u_texture"],
+    attributes: ["aPosition"],
+};
+export const updateVs: Shader = {
+    source: uvs as string,
+    attributes: ["aVertexPosition"],
+};
+export const updateFs: Shader = {
+    source: ufs as string,
+    uniforms: ["uPrevState", "uDimens", "uNewPixel"],
+    attributes: ["aPosition"],
+};
