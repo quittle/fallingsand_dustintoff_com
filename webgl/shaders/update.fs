@@ -1,3 +1,5 @@
+#version 100
+
 precision highp float;
 precision highp int;
 
@@ -13,6 +15,35 @@ vec2 clipVecToPositive(vec2 position) {
 
 const vec4 BLANK = vec4(0.0, 0.0, 0.0, 1.0);
 const vec4 SAND = vec4(1.0, 0.0, 0.0, 1.0);
+
+vec4 getNeighbor(vec2 pos, vec2 delta) {
+    return texture2D(uPrevState, pos + delta);
+}
+
+// Neighbors in the form
+//
+// a b c
+// d e f
+// g h i
+void getNeighbors(vec2 pos, vec2 fDimens, out vec4 a, out vec4 b, out vec4 c, out vec4 d, out vec4 e, out vec4 f, out vec4 g, out vec4 h, out vec4 i) {
+    float xDelta = 1.0 / fDimens.x;
+    float yDelta = 1.0 / fDimens.y;
+
+// Above
+    a = getNeighbor(pos, vec2(-xDelta, yDelta));
+    b = getNeighbor(pos, vec2(0.0, yDelta));
+    c = getNeighbor(pos, vec2(xDelta, yDelta));
+
+// Same row
+    d = getNeighbor(pos, vec2(-xDelta, 0.0));
+    e = getNeighbor(pos, vec2(0.0, 0.0));
+    f = getNeighbor(pos, vec2(xDelta, 0.0));
+
+// Below
+    g = getNeighbor(pos, vec2(-xDelta, -yDelta));
+    h = getNeighbor(pos, vec2(0.0, -yDelta));
+    i = getNeighbor(pos, vec2(xDelta, -yDelta));
+}
 
 // Coordinate space is 0,0 => iPos.x,iPos.y from the bottom-left corner up and to the right
 //
@@ -30,6 +61,12 @@ void main() {
     // int coordinates in buffer
     ivec2 iPos = ivec2(int(pos.x * fDimens.x), int(pos.y * fDimens.y));
 
+    vec4 a, b, c, d, e, f, g, h, i;
+    getNeighbors(pos, fDimens, a, b, c, d, e, f, g, h, i);
+
+    bool isTopRow = (iPos.y == uDimens.y - 1);
+    bool isBottomRow = iPos.y == 0;
+
     if (iPos == uNewPixel) {
         gl_FragColor = SAND;
     } else {
@@ -38,9 +75,17 @@ void main() {
         if (iPos.y == uDimens.y - 1) { // Nothing falls from above the screen
             color = BLANK;
         } else {
-            color = texture2D(uPrevState, vec2(pos.x, pos.y + (1.0 / fDimens.y)));
-        }
+            if (b == SAND) {
+                color = SAND;
+            }
+            if (h == SAND && e == SAND) {
+                color = SAND;
+            }
+            if (isBottomRow && e == SAND) {
+                color = SAND;
+            }
 
-        gl_FragColor = vec4(color.rgb, 1);
+            gl_FragColor = vec4(color.rgb, 1);
+        }
     }
 }

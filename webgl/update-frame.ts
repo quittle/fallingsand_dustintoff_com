@@ -1,5 +1,5 @@
 import { ProgramSetup } from "./types";
-import { createColorTexture, createVertexBuffer } from "./utils";
+import { createColorTexture } from "./utils";
 
 export function updateFrame(
     gl: WebGLRenderingContext,
@@ -91,7 +91,7 @@ export function updateFrame(
         );
     }
 
-    // CLear
+    // Clear
     gl.clearColor(1, 0, 0, 1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
