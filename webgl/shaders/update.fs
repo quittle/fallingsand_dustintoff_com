@@ -22,10 +22,10 @@ vec4 getNeighbor(vec2 pos, vec2 delta) {
 
 // Neighbors in the form
 //
-// a b c
-// d e f
-// g h i
-void getNeighbors(vec2 pos, vec2 fDimens, out vec4 a, out vec4 b, out vec4 c, out vec4 d, out vec4 e, out vec4 f, out vec4 g, out vec4 h, out vec4 i) {
+//   a b c
+// l d e f r
+//   g h i
+void getNeighbors(vec2 pos, vec2 fDimens, out vec4 a, out vec4 b, out vec4 c, out vec4 l, out vec4 d, out vec4 e, out vec4 f, out vec4 r, out vec4 g, out vec4 h, out vec4 i) {
     float xDelta = 1.0 / fDimens.x;
     float yDelta = 1.0 / fDimens.y;
 
@@ -35,9 +35,11 @@ void getNeighbors(vec2 pos, vec2 fDimens, out vec4 a, out vec4 b, out vec4 c, ou
     c = getNeighbor(pos, vec2(xDelta, yDelta));
 
 // Same row
+    l = getNeighbor(pos, vec2(-2.0 * xDelta, 0.0));
     d = getNeighbor(pos, vec2(-xDelta, 0.0));
     e = getNeighbor(pos, vec2(0.0, 0.0));
     f = getNeighbor(pos, vec2(xDelta, 0.0));
+    r = getNeighbor(pos, vec2(2.0 * xDelta, 0.0));
 
 // Below
     g = getNeighbor(pos, vec2(-xDelta, -yDelta));
@@ -61,8 +63,8 @@ void main() {
     // int coordinates in buffer
     ivec2 iPos = ivec2(int(pos.x * fDimens.x), int(pos.y * fDimens.y));
 
-    vec4 a, b, c, d, e, f, g, h, i;
-    getNeighbors(pos, fDimens, a, b, c, d, e, f, g, h, i);
+    vec4 a, b, c, l, d, e, f, r, g, h, i;
+    getNeighbors(pos, fDimens, a, b, c, l, d, e, f, r, g, h, i);
 
     bool isTopRow = (iPos.y == uDimens.y - 1);
     bool isBottomRow = iPos.y == 0;
@@ -78,8 +80,16 @@ void main() {
             if (b == SAND) {
                 color = SAND;
             }
+            if (a == SAND && d == SAND && e == BLANK) {
+                color = SAND;
+            } else if (c == SAND && f == SAND && e == BLANK && r == SAND) {
+                color = SAND;
+            }
             if (h == SAND && e == SAND) {
                 color = SAND;
+            }
+            if (e == SAND && h == SAND && (g == BLANK || i == BLANK)) {
+                color = BLANK;
             }
             if (isBottomRow && e == SAND) {
                 color = SAND;
