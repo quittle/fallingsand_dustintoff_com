@@ -1,9 +1,26 @@
 import { ProgramSetup } from "./types";
-import { createColorTexture } from "./utils";
+import { createColorTexture, readCurrentPixels } from "./utils";
+
+let prevCount = 0;
+let prevData = null;
+
+let copyTexture: WebGLTexture | undefined;
+
+function getCopyTexture(gl: WebGLRenderingContext): WebGLTexture {
+    if (!copyTexture) {
+        copyTexture = createColorTexture(
+            gl,
+            "copyTexture",
+            gl.canvas.width,
+            gl.canvas.height,
+        );
+    }
+    return copyTexture;
+}
 
 export function updateFrame(
     gl: WebGLRenderingContext,
-    _canvas: HTMLCanvasElement,
+    canvas: HTMLCanvasElement,
     setup: ProgramSetup,
 ) {
     let { stateTexture, updateProgram } = setup;
@@ -25,13 +42,25 @@ export function updateFrame(
         level,
     );
 
+    const next = readCurrentPixels(gl);
+    let sandCount = 0;
+    for (let i = 0; i < next.length; i += 4) {
+        if (next[i] > 0 || next[i + 1] > 0 || next[i + 2] > 0) {
+            sandCount += 1;
+        }
+    }
+    if (sandCount > prevCount + 1 || sandCount < prevCount) {
+        const img = document.createElement("img");
+        img.id = "prev-frame-img";
+        img.src = prevData;
+        document.body.appendChild(img);
+        throw new Error(`${sandCount} illegal when previously ${prevCount}`);
+    }
+    prevCount = sandCount;
+    prevData = canvas.toDataURL("image/png", 1.0);
+
     // Copy framebuffer-attached texture stateTexture into copyTexture
-    const copyTexture = createColorTexture(
-        gl,
-        "copyTexture",
-        gl.canvas.width,
-        gl.canvas.height,
-    );
+    const copyTexture = getCopyTexture(gl);
     {
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, copyTexture);
@@ -62,9 +91,10 @@ export function updateFrame(
         gl.canvas.width,
         gl.canvas.height,
     );
+
     gl.uniform2i(
         setup.updateShaders.fragment.uniformLocations["uNewPixel"],
-        Math.random() * gl.canvas.width,
+        Math.random() > 0.9 ? Math.random() * gl.canvas.width : -1,
         gl.canvas.height - 1,
     );
 
@@ -92,7 +122,7 @@ export function updateFrame(
     }
 
     // Clear
-    gl.clearColor(1, 0, 0, 1);
+    gl.clearColor(0, 0, 0, 1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     {
@@ -105,6 +135,5 @@ export function updateFrame(
     // Unbind the framebuffer to ensure rendering to canvas
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
-    gl.deleteTexture(copyTexture);
     gl.deleteFramebuffer(fb);
 }

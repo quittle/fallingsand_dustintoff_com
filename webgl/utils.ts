@@ -105,3 +105,19 @@ export function createColorTexture(
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     return texture;
 }
+
+export function readCurrentPixels(gl: WebGLRenderingContext): Uint8Array {
+    const pixels = new Uint8Array(
+        gl.drawingBufferWidth * gl.drawingBufferHeight * 4,
+    );
+    gl.readPixels(
+        0,
+        0,
+        gl.drawingBufferWidth,
+        gl.drawingBufferHeight,
+        gl.RGBA,
+        gl.UNSIGNED_BYTE,
+        pixels,
+    );
+    return pixels;
+}

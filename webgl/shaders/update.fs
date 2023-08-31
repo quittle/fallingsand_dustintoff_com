@@ -14,6 +14,7 @@ vec2 clipVecToPositive(vec2 position) {
 }
 
 const vec4 BLANK = vec4(0.0, 0.0, 0.0, 1.0);
+const vec4 SPECIAL = vec4(0.0, 1.0, 0.0, 1.0);
 const vec4 SAND = vec4(1.0, 0.0, 0.0, 1.0);
 
 vec4 getNeighbor(vec2 pos, vec2 delta) {
@@ -76,26 +77,22 @@ void main() {
 
         if (iPos.y == uDimens.y - 1) { // Nothing falls from above the screen
             color = BLANK;
-        } else {
-            if (b == SAND) {
-                color = SAND;
-            }
-            if (a == SAND && d == SAND && e == BLANK) {
-                color = SAND;
-            } else if (c == SAND && f == SAND && e == BLANK && r == SAND) {
-                color = SAND;
-            }
-            if (h == SAND && e == SAND) {
-                color = SAND;
-            }
-            if (e == SAND && h == SAND && (g == BLANK || i == BLANK)) {
-                color = BLANK;
-            }
-            if (isBottomRow && e == SAND) {
-                color = SAND;
-            }
-
-            gl_FragColor = vec4(color.rgb, 1);
+        } else if (b == SAND) {
+            color = SAND;
+        } else if (a == SAND && d == SAND && e == BLANK) {
+            color = SAND;
+        } else if (c == SAND && f == SAND && e == BLANK && r == SAND) {
+            color = SAND;
+        } else if (h == SAND && e == SAND) {
+            color = SAND;
+        } else if (isBottomRow && e == SAND) {
+            color = SAND;
         }
+
+        if (!isBottomRow && e == SAND /*&& h == SAND*/ && (g == BLANK || i == BLANK)) {
+            color = BLANK;
+        }
+
+        gl_FragColor = vec4(color.rgb, 1);
     }
 }

@@ -17,7 +17,7 @@ function runFrame(
 }
 
 export function setupCanvas(canvas: HTMLCanvasElement) {
-    var gl = canvas.getContext("webgl");
+    var gl = canvas.getContext("webgl", { preserveDrawingBuffer: true });
     if (!gl) {
         console.error("Failed to get webgl for", canvas);
         return;
