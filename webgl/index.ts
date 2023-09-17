@@ -6,6 +6,7 @@ import { setRepeatedRequestAnimationFrameCallback } from "../animation";
 import { updateFrame } from "./update-frame";
 import { displayFrame } from "./display-frame";
 import { initialize } from "./initialize";
+import { addGameEventListeners } from "./event-listeners";
 
 function runFrame(
     gl: WebGLRenderingContext,
@@ -24,6 +25,8 @@ export function setupCanvas(canvas: HTMLCanvasElement) {
     }
 
     const info = initialize(gl);
+
+    addGameEventListeners(canvas);
 
     setRepeatedRequestAnimationFrameCallback(() => {
         runFrame(gl, canvas, info);

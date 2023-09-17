@@ -3,6 +3,7 @@ import { createColorTexture, readCurrentPixels } from "./utils";
 
 let prevCount = 0;
 let prevData = null;
+let prevNewPixelCount = 0;
 
 let copyTexture: WebGLTexture | undefined;
 
@@ -16,6 +17,24 @@ function getCopyTexture(gl: WebGLRenderingContext): WebGLTexture {
         );
     }
     return copyTexture;
+}
+
+export type SandType = "sand";
+
+interface SandUpdate {
+    x: number;
+    y: number;
+    sandType: SandType;
+}
+
+const updates: Readonly<SandUpdate>[] = [];
+
+export function updatePixelForNextFrame(
+    x: number,
+    y: number,
+    sandType: SandType,
+): void {
+    updates.push({ x, y, sandType });
 }
 
 export function updateFrame(
@@ -49,7 +68,7 @@ export function updateFrame(
             sandCount += 1;
         }
     }
-    if (sandCount > prevCount + 1 || sandCount < prevCount) {
+    if (sandCount > prevCount + prevNewPixelCount || sandCount < prevCount) {
         const img = document.createElement("img");
         img.id = "prev-frame-img";
         img.src = prevData;
@@ -92,10 +111,21 @@ export function updateFrame(
         gl.canvas.height,
     );
 
-    gl.uniform2i(
-        setup.updateShaders.fragment.uniformLocations["uNewPixel"],
-        Math.random() > 0.9 ? Math.random() * gl.canvas.width : -1,
-        gl.canvas.height - 1,
+    const numNewPixels = Math.min(updates.length, 256);
+    gl.uniform1i(
+        setup.updateShaders.fragment.uniformLocations["uNewPixelCount"],
+        numNewPixels,
+    );
+    const arr = new Uint32Array(256 * 2);
+    for (let i = 0; i < numNewPixels; i++) {
+        arr[2 * i] = updates[i].x;
+        arr[2 * i + 1] = updates[i].y;
+    }
+    prevNewPixelCount = numNewPixels;
+    updates.splice(0, 256);
+    gl.uniform2iv(
+        setup.updateShaders.fragment.uniformLocations["uNewPixels"],
+        arr,
     );
 
     {

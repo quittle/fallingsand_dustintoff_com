@@ -7,7 +7,8 @@ varying vec2 aPosition;
 
 uniform sampler2D uPrevState;
 uniform ivec2 uDimens;
-uniform ivec2 uNewPixel;
+uniform ivec2 uNewPixels[256];
+uniform int uNewPixelCount;
 
 vec2 clipVecToPositive(vec2 position) {
     return (position + vec2(1.0, 1.0)) / 2.0;
@@ -70,29 +71,35 @@ void main() {
     bool isTopRow = (iPos.y == uDimens.y - 1);
     bool isBottomRow = iPos.y == 0;
 
-    if (iPos == uNewPixel) {
-        gl_FragColor = SAND;
-    } else {
-        vec4 color;
-
-        if (iPos.y == uDimens.y - 1) { // Nothing falls from above the screen
-            color = BLANK;
-        } else if (b == SAND) {
-            color = SAND;
-        } else if (a == SAND && d == SAND && e == BLANK) {
-            color = SAND;
-        } else if (c == SAND && f == SAND && e == BLANK && r == SAND) {
-            color = SAND;
-        } else if (h == SAND && e == SAND) {
-            color = SAND;
-        } else if (isBottomRow && e == SAND) {
-            color = SAND;
+    for (int i = 0; i < 256; i++) {
+        if (i == uNewPixelCount) {
+            break;
         }
-
-        if (!isBottomRow && e == SAND /*&& h == SAND*/ && (g == BLANK || i == BLANK)) {
-            color = BLANK;
+        if (iPos == uNewPixels[i]) {
+            gl_FragColor = SAND;
+            return;
         }
-
-        gl_FragColor = vec4(color.rgb, 1);
     }
+
+    vec4 color;
+
+    if (iPos.y == uDimens.y - 1) { // Nothing falls from above the screen
+        color = BLANK;
+    } else if (b == SAND) {
+        color = SAND;
+    } else if (a == SAND && d == SAND && e == BLANK) {
+        color = SAND;
+    } else if (c == SAND && f == SAND && e == BLANK && r == SAND) {
+        color = SAND;
+    } else if (h == SAND && e == SAND) {
+        color = SAND;
+    } else if (isBottomRow && e == SAND) {
+        color = SAND;
+    }
+
+    if (!isBottomRow && e == SAND /*&& h == SAND*/ && (g == BLANK || i == BLANK)) {
+        color = BLANK;
+    }
+
+    gl_FragColor = vec4(color.rgb, 1);
 }

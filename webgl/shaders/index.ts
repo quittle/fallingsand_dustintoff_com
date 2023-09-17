@@ -28,6 +28,6 @@ export const updateVs: Shader = {
 };
 export const updateFs: Shader = {
     source: ufs as string,
-    uniforms: ["uPrevState", "uDimens", "uNewPixel"],
+    uniforms: ["uPrevState", "uDimens", "uNewPixels", "uNewPixelCount"],
     attributes: ["aPosition"],
 };
