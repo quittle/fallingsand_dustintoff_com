@@ -1,8 +1,9 @@
 {
     "compilerOptions": {
-        "module": "ESNext",
+        "module": "esnext",
         "target": "esnext",
-        "moduleResolution": "NodeNext",
+        "moduleResolution": "Bundler",
+        "allowSyntheticDefaultImports": true,
         "paths": {
             "hello-wasm": ["./rust/pkg"]
         }

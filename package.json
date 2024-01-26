@@ -1,4 +1,5 @@
 {
+    "type": "module",
     "scripts": {
         "dev": "vite",
         "build": "npm run wasm-pack && vite build",
@@ -12,12 +13,18 @@
         "format-check": "npm run prettier-check && npm run cargo-fmt-check",
         "format": "npm run prettier && npm run clippy && npm run cargo-fmt",
         "type-check": "tsc --noEmit",
-        "release": "npm run format-check && npm run clippy-check && npm run type-check && npm run build"
+        "test": "NODE_OPTIONS='--experimental-vm-modules' jest --detectOpenHandles",
+        "release": "npm run format-check && npm run clippy-check && npm run type-check && npm run build && npm run test"
     },
     "devDependencies": {
+        "@types/jest": "^29.5.5",
+        "electron": "^26.2.1",
         "gl-matrix": "^3.4.3",
         "hello-wasm": "file:rust/pkg",
+        "jest": "^29.7.0",
         "prettier": "^3.0.0",
+        "puppeteer": "^21.3.8",
+        "ts-jest": "^29.1.1",
         "typescript": "^5.1.6",
         "vite": "^4.4.6",
         "vite-plugin-top-level-await": "^1.3.1",

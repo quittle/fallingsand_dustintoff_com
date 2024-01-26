@@ -1,5 +1,7 @@
 // Enables logging issues to console
-import "webgl-lint";
+if (globalThis.navigator) {
+    import("webgl-lint");
+}
 
 import { ProgramSetup } from "./types";
 import { setRepeatedRequestAnimationFrameCallback } from "../animation";
@@ -7,6 +9,9 @@ import { updateFrame } from "./update-frame";
 import { displayFrame } from "./display-frame";
 import { initialize } from "./initialize";
 import { addGameEventListeners } from "./event-listeners";
+import { readCurrentPixels } from "./utils";
+
+globalThis["readCurrentPixels"] = readCurrentPixels;
 
 function runFrame(
     gl: WebGLRenderingContext,
@@ -16,6 +21,7 @@ function runFrame(
     updateFrame(gl, canvas, setup);
     displayFrame(gl, canvas, setup);
 }
+globalThis["runFrame"] = runFrame;
 
 export function setupCanvas(canvas: HTMLCanvasElement) {
     var gl = canvas.getContext("webgl", { preserveDrawingBuffer: true });
@@ -32,3 +38,4 @@ export function setupCanvas(canvas: HTMLCanvasElement) {
         runFrame(gl, canvas, info);
     });
 }
+globalThis["setupCanvas"] = setupCanvas;
