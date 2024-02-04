@@ -1,15 +1,34 @@
 import puppeteer, { Browser, Page } from "puppeteer";
 import { createServer, ViteDevServer } from "vite";
+import { readCurrentPixels } from "./utils";
+import { runFrame, setupCanvas } from ".";
 
 declare global {
     interface Window {
-        readCurrentPixels: (gl: WebGLRenderingContext) => Uint8Array;
-        setupCanvas: (canvas: HTMLCanvasElement) => void;
-        runFrame: (
-            gl: WebGLRenderingContext,
-            canvas: HTMLCanvasElement,
-            setup: any,
-        ) => void;
+        readCurrentPixels: typeof readCurrentPixels;
+        setupCanvas: typeof setupCanvas;
+        runFrame: typeof runFrame;
+        getOrInitialize: typeof InBrowser.getOrInitialize;
+    }
+}
+
+namespace InBrowser {
+    export function getOrInitialize(): {
+        canvas: HTMLCanvasElement;
+        gl: WebGLRenderingContext;
+    } {
+        let canvas: HTMLCanvasElement = document.getElementById(
+            "canvas",
+        ) as HTMLCanvasElement;
+        if (!canvas) {
+            canvas = document.createElement("canvas");
+            canvas.width = 5;
+            canvas.height = 5;
+            window.setupCanvas(canvas);
+        }
+        const gl = canvas.getContext("webgl");
+
+        return { canvas, gl };
     }
 }
 
@@ -67,16 +86,25 @@ describe("end-to-end", () => {
     test("default blank", async () => {
         await loadPage("rust.html");
 
-        const pixels: Array<number> = await page.evaluate(async () => {
-            const canvas = document.createElement("canvas");
-            document.body.appendChild(canvas);
-            canvas.width = 5;
-            canvas.height = 5;
-            window.setupCanvas(canvas);
+        for (const [name, func] of Object.entries(InBrowser)) {
+            await page.evaluate(
+                (name, body) => {
+                    window[name] = eval(`(${body})`);
+                },
+                name,
+                func.toString(),
+            );
+        }
 
-            const gl = canvas.getContext("webgl");
+        const pixels = await page.evaluate(async () => {
+            const { gl } = window.getOrInitialize();
             return Array.from(window.readCurrentPixels(gl));
         });
         expect(Array.from(pixels)).toEqual(arr(0, 5 * 5 * 4));
+
+        await page.evaluate(async () => {
+            const { canvas, gl } = window.getOrInitialize();
+            // window.runFrame(gl, canvas, null);
+        });
     });
 });

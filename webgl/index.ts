@@ -13,7 +13,7 @@ import { readCurrentPixels } from "./utils";
 
 globalThis["readCurrentPixels"] = readCurrentPixels;
 
-function runFrame(
+export function runFrame(
     gl: WebGLRenderingContext,
     canvas: HTMLCanvasElement,
     setup: ProgramSetup,
