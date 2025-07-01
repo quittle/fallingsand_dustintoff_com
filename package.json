@@ -18,7 +18,7 @@
     },
     "devDependencies": {
         "@types/jest": "^29.5.5",
-        "electron": "^26.2.1",
+        "electron": "^28.3.2",
         "gl-matrix": "^3.4.3",
         "hello-wasm": "file:rust/pkg",
         "jest": "^29.7.0",
