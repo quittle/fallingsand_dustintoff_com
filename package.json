@@ -23,7 +23,7 @@
         "hello-wasm": "file:rust/pkg",
         "jest": "^29.7.0",
         "prettier": "^3.0.0",
-        "puppeteer": "^21.3.8",
+        "puppeteer": "^24.22.3",
         "ts-jest": "^29.1.1",
         "typescript": "^5.1.6",
         "vite": "^4.4.6",
