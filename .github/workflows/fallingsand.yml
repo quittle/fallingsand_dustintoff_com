@@ -18,6 +18,13 @@ jobs:
               with:
                   node-version-file: ".nvmrc"
                   cache: "npm"
+            - name: Cache browser binaries
+              uses: actions/cache@v4
+              with:
+                  path: |
+                      ~/.cache/puppeteer
+                      ~/.cache/electron
+                  key: ${{ runner.os }}-browser-binaries-${{ hashFiles('package-lock.json') }}
             - name: Setup Rust
               run: rustup set profile default
             - run: npm ci
