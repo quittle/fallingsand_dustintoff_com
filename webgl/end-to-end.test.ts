@@ -43,6 +43,7 @@ describe("end-to-end", () => {
         browser = await puppeteer.launch({
             headless: "new",
             dumpio: true,
+            args: ["--no-sandbox", "--disable-setuid-sandbox"],
         });
         pageErrors.length = 0;
     });
@@ -60,7 +61,7 @@ describe("end-to-end", () => {
     });
 
     afterEach(async () => {
-        await page.close({ runBeforeUnload: false });
+        await page?.close({ runBeforeUnload: false });
         if (pageErrors.length > 0) {
             console.error(pageErrors);
         }
@@ -68,7 +69,7 @@ describe("end-to-end", () => {
     });
 
     afterAll(async () => {
-        await browser.close();
+        await browser?.close();
         await viteDevServer.close();
     });
 
