@@ -41,6 +41,9 @@ jobs:
                   role-to-assume: arn:aws:iam::915290536872:role/fallingsand.dustintoff.com-deploy
                   role-session-name: Deploy_via_GitHub_to_AWS_via_FederatedOIDC
                   aws-region: us-east-1
+            - name: Deploy CloudFormation stack
+              if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+              run: aws cloudformation deploy --stack-name fallingsand-dustintoff-com --template-file config/cloudformation.yml --no-fail-on-empty-changeset
             - name: Deploy to S3
               if: github.ref == 'refs/heads/main' && github.event_name == 'push'
               run: |

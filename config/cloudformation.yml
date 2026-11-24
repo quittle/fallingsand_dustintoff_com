@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Manage the existing fallingsand.dustintoff.com bucket and CloudFront distribution (imported, not created).
+
+Resources:
+    WebsiteBucket:
+        Type: AWS::S3::Bucket
+        DeletionPolicy: Retain
+        Properties:
+            BucketName: fallingsand.dustintoff.com
+            WebsiteConfiguration:
+                IndexDocument: index.html
+
+    WebsiteBucketPolicy:
+        Type: AWS::S3::BucketPolicy
+        DeletionPolicy: Retain
+        Properties:
+            Bucket: !Ref WebsiteBucket
+            PolicyDocument:
+                Version: "2012-10-17"
+                Id: Policy1517636620456
+                Statement:
+                    - Sid: Stmt1517636618597
+                      Effect: Allow
+                      Principal: "*"
+                      Action: s3:GetObject
+                      Resource: !Sub "arn:aws:s3:::${WebsiteBucket}/*"
+
+    WwwDistribution:
+        Type: AWS::CloudFront::Distribution
+        DeletionPolicy: Retain
+        Properties:
+            DistributionConfig:
+                Aliases:
+                    - fallingsand.dustintoff.com
+                DefaultRootObject: index.html
+                DefaultCacheBehavior:
+                    TargetOriginId: S3-fallingsand.dustintoff.com
+                    ViewerProtocolPolicy: redirect-to-https
+                    Compress: true
+                    # ForwardedValues is required for legacy distributions without a
+                    # cache policy; dropping it breaks the import reconciliation.
+                    ForwardedValues:
+                        QueryString: false
+                        Cookies:
+                            Forward: none
+                Enabled: true
+                Origins:
+                    - Id: S3-fallingsand.dustintoff.com
+                      DomainName: fallingsand.dustintoff.com.s3.amazonaws.com
+                      S3OriginConfig:
+                          OriginAccessIdentity: ""
+                PriceClass: PriceClass_100
+                HttpVersion: http2and3
+                ViewerCertificate:
+                    AcmCertificateArn: arn:aws:acm:us-east-1:915290536872:certificate/c5f9c9f7-5a30-4623-bef2-9307f0f9b5a8
+                    MinimumProtocolVersion: TLSv1.2_2021
+                    # SslSupportMethod is a cfn-lint dependency of AcmCertificateArn (E3021).
+                    SslSupportMethod: sni-only
