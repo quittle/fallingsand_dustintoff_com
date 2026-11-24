@@ -2,9 +2,9 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "npm run wasm-pack && vite build",
-        "build:site": "vite build --config vite.config.site.js",
-        "dev:site": "vite --config vite.config.site.js",
+        "build": "vite build",
+        "dev:rust": "vite --config vite.config.rust.js",
+        "build:rust": "npm run wasm-pack && vite build --config vite.config.rust.js",
         "wasm-pack": "wasm-pack build rust --target bundler",
         "prettier-check": "prettier . --check",
         "prettier": "prettier . --write",
@@ -16,7 +16,7 @@
         "format": "npm run prettier && npm run clippy && npm run cargo-fmt",
         "type-check": "tsc --noEmit",
         "test": "NODE_OPTIONS='--experimental-vm-modules' jest --detectOpenHandles",
-        "release": "npm run format-check && npm run clippy-check && npm run wasm-pack && npm run type-check && npm run build && npm run test"
+        "release": "npm run format-check && npm run clippy-check && npm run wasm-pack && npm run type-check && npm run build:rust && npm run test"
     },
     "devDependencies": {
         "@types/jest": "^29.5.5",

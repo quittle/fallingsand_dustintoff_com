@@ -38,7 +38,9 @@ describe("end-to-end", () => {
     const pageErrors: string[] = [];
 
     beforeAll(async () => {
-        viteDevServer = await createServer();
+        viteDevServer = await createServer({
+            configFile: "vite.config.rust.js",
+        });
         await viteDevServer.listen();
         browser = await puppeteer.launch({
             headless: "new",
