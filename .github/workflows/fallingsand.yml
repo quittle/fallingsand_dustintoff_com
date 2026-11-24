@@ -9,6 +9,9 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
+        permissions:
+            id-token: write
+            contents: read
 
         steps:
             - name: Checkout
@@ -25,7 +28,21 @@ jobs:
                       ~/.cache/puppeteer
                       ~/.cache/electron
                   key: ${{ runner.os }}-browser-binaries-${{ hashFiles('package-lock.json') }}
+            - run: npm ci
+            - run: npm run build
             - name: Setup Rust
               run: rustup set profile default
-            - run: npm ci
-            - run: npm run release
+            - run: npm run wasm-pack
+            - run: npm run test
+            - name: Configure AWS Credentials
+              if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+              uses: aws-actions/configure-aws-credentials@v6.3.0
+              with:
+                  role-to-assume: arn:aws:iam::915290536872:role/fallingsand.dustintoff.com-deploy
+                  role-session-name: Deploy_via_GitHub_to_AWS_via_FederatedOIDC
+                  aws-region: us-east-1
+            - name: Deploy to S3
+              if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+              run: |
+                  aws s3 sync dist/ s3://fallingsand.dustintoff.com --delete --cache-control "public, max-age=900" --exclude "*.grw"
+                  aws s3 sync dist/ s3://fallingsand.dustintoff.com --delete --cache-control "public, max-age=900" --exclude "*" --include "*.grw" --content-type "text/xml"

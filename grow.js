@@ -30,8 +30,17 @@ TODO: speed up game
 
     var loadingText = "Loading...";
 
-    /** @type {!Object.<string, string>} */ const resource_root =
-        RESOURCE_PATHS["Grow"];
+    /** @type {!Object.<string, string>} */ const resource_root = {
+        images: {
+            "droplet.png": "/Grow/images/droplet.png",
+            "fire.png": "/Grow/images/fire.png",
+            "gen.png": "/Grow/images/gen.png",
+            "growth.png": "/Grow/images/growth.png",
+            "steam.png": "/Grow/images/steam.png",
+            "wall.png": "/Grow/images/wall.png",
+        },
+        "world4.grw": "/Grow/world4.grw",
+    };
     var world = resource_root["world4.grw"];
     var imageLocation = resource_root["images"];
 
