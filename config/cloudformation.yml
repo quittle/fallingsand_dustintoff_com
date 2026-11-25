@@ -1,7 +1,45 @@
 AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Parameters:
+    DeploymentContentVersion:
+        Type: String
+        Description: Any unique string identifying the files being deployed. The deploy script passes the packaged CodeUri (an S3 URI that changes whenever the content changes).
 Description: Manage the existing fallingsand.dustintoff.com bucket and CloudFront distribution (imported, not created).
 
 Resources:
+
+    S3UploadLambdaLayer:
+        Type: AWS::Serverless::LayerVersion
+        Properties:
+            ContentUri: ../node_modules/s3-upload-custom-resource-lambda-layer/dist/layer.zip
+
+    S3UploadLambda:
+        Type: AWS::Serverless::Function
+        Properties:
+            Layers: [!Ref S3UploadLambdaLayer]
+            CodeUri: ../dist
+            Handler: s3-upload-custom-resource.handler
+            MemorySize: 10240
+            Timeout: 180
+            Runtime: nodejs24.x
+            Policies:
+                - S3CrudPolicy:
+                    BucketName: !Ref WebsiteBucket
+
+    DeployWebsite:
+        Type: Custom::UploadFilesToS3
+        Properties:
+            ServiceToken: !GetAtt S3UploadLambda.Arn
+            BucketName: !Ref WebsiteBucket
+            ContentVersion: !Ref DeploymentContentVersion
+
+    SiteCertificate:
+        Type: AWS::CertificateManager::Certificate
+        DeletionPolicy: Retain
+        Properties:
+            DomainName: fallingsand.dustintoff.com
+            ValidationMethod: DNS
+
     WebsiteBucket:
         Type: AWS::S3::Bucket
         DeletionPolicy: Retain
@@ -52,7 +90,7 @@ Resources:
                 PriceClass: PriceClass_100
                 HttpVersion: http2and3
                 ViewerCertificate:
-                    AcmCertificateArn: arn:aws:acm:us-east-1:915290536872:certificate/c5f9c9f7-5a30-4623-bef2-9307f0f9b5a8
+                    AcmCertificateArn: !Ref SiteCertificate
                     MinimumProtocolVersion: TLSv1.2_2021
                     # SslSupportMethod is a cfn-lint dependency of AcmCertificateArn (E3021).
                     SslSupportMethod: sni-only

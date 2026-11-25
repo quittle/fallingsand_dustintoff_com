@@ -1,0 +1,25 @@
+#!/bin/bash -eux
+
+set -o pipefail
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+
+export AWS_DEFAULT_REGION=us-east-1
+
+generated_template="/tmp/fallingsand.dustintoff.com-generated-cloudformation.yml"
+
+aws cloudformation package \
+    --template-file "${DIR}/../config/cloudformation.yml" \
+    --s3-bucket sam-915290536872 \
+    --output-template-file "${generated_template}" \
+    --use-json
+
+code_uri="$(jq '.Resources.S3UploadLambda.Properties.CodeUri' "${generated_template}" --raw-output)"
+
+aws cloudformation deploy \
+    --template-file "${generated_template}" \
+    --stack-name "fallingsand-dustintoff-com" \
+    --capabilities CAPABILITY_IAM \
+    --no-fail-on-empty-changeset \
+    --parameter-overrides \
+    "DeploymentContentVersion=${code_uri}"

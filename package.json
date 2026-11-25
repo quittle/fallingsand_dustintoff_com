@@ -16,7 +16,8 @@
         "format": "npm run prettier && npm run clippy && npm run cargo-fmt",
         "type-check": "tsc --noEmit",
         "test": "NODE_OPTIONS='--experimental-vm-modules' jest --detectOpenHandles",
-        "release": "npm run format-check && npm run clippy-check && npm run wasm-pack && npm run type-check && npm run build:rust && npm run test"
+        "release": "npm run format-check && npm run clippy-check && npm run wasm-pack && npm run type-check && npm run build:rust && npm run test",
+        "deploy": "./scripts/deploy"
     },
     "devDependencies": {
         "@types/jest": "^29.5.5",
@@ -26,6 +27,7 @@
         "jest": "^29.7.0",
         "prettier": "^3.0.0",
         "puppeteer": "^21.3.8",
+        "s3-upload-custom-resource-lambda-layer": "^1.4.0",
         "ts-jest": "^29.1.1",
         "typescript": "^5.1.6",
         "vite": "^4.4.6",
