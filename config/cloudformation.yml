@@ -35,14 +35,12 @@ Resources:
 
     SiteCertificate:
         Type: AWS::CertificateManager::Certificate
-        DeletionPolicy: Retain
         Properties:
             DomainName: fallingsand.dustintoff.com
             ValidationMethod: DNS
 
     WebsiteBucket:
         Type: AWS::S3::Bucket
-        DeletionPolicy: Retain
         Properties:
             BucketName: fallingsand.dustintoff.com
             WebsiteConfiguration:
@@ -50,7 +48,6 @@ Resources:
 
     WebsiteBucketPolicy:
         Type: AWS::S3::BucketPolicy
-        DeletionPolicy: Retain
         Properties:
             Bucket: !Ref WebsiteBucket
             PolicyDocument:
@@ -65,7 +62,6 @@ Resources:
 
     WwwDistribution:
         Type: AWS::CloudFront::Distribution
-        DeletionPolicy: Retain
         Properties:
             DistributionConfig:
                 Aliases:
@@ -74,13 +70,7 @@ Resources:
                 DefaultCacheBehavior:
                     TargetOriginId: S3-fallingsand.dustintoff.com
                     ViewerProtocolPolicy: redirect-to-https
-                    Compress: true
-                    # ForwardedValues is required for legacy distributions without a
-                    # cache policy; dropping it breaks the import reconciliation.
-                    ForwardedValues:
-                        QueryString: false
-                        Cookies:
-                            Forward: none
+                    CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
                 Enabled: true
                 Origins:
                     - Id: S3-fallingsand.dustintoff.com
