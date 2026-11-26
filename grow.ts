@@ -20,17 +20,19 @@ TODO: speed up game
     var opacity = 1; /* 0.0 - 1.0 are valid opacities */
     var defaultPenSize = 2;
     var penSize = 2;
-    var holdForElement = false; /* If true, you must hold down the key for an element, otherwise it defaults to droplet */
+    var holdForElement =
+        false; /* If true, you must hold down the key for an element, otherwise it defaults to droplet */
     var shootDist = 30;
     var maxBulletSpeed = 2;
     var showPlayer = true;
     var playerMode = false; /* Restrict to within shootDist */
     var useGraphics = false; /* Super performance loss */
-    var disableSelect = true; /* enabling prevents the user from accidentally highlighting things when drawing */
+    var disableSelect =
+        true; /* enabling prevents the user from accidentally highlighting things when drawing */
 
     var loadingText = "Loading...";
 
-    /** @type {!Object.<string, string>} */ const resource_root = {
+    const resource_root = {
         images: {
             "droplet.png": "/Grow/images/droplet.png",
             "fire.png": "/Grow/images/fire.png",
@@ -103,7 +105,7 @@ TODO: speed up game
     init();
     if (disableSelect) {
         body.onselectstart = () => false;
-        body.style.MozUserSelect = "none";
+        (body.style as any).MozUserSelect = "none";
     }
 
     var prevX, prevY, curX, curY;
@@ -132,8 +134,8 @@ TODO: speed up game
     /* Checks if the spot is covered in blocks so you don't click on a hidden link */
     function isClear(e) {
         try {
-            var x = parseInt(e.clientX / particleSize, 10);
-            var y = parseInt(e.clientY / particleSize, 10);
+            var x = Math.trunc(e.clientX / particleSize);
+            var y = Math.trunc(e.clientY / particleSize);
             return particles[x][y].fresh == "empty";
         } catch (e) {
             return true;
@@ -144,28 +146,28 @@ TODO: speed up game
         point.clearRect(0, 0, window.innerWidth, window.innerHeight);
         particles = [];
         modPart = new Array(
-            parseInt(window.innerWidth / particleSize + 1, 10) *
-                parseInt(window.innerHeight / particleSize + 1, 10),
+            Math.trunc(window.innerWidth / particleSize + 1) *
+                Math.trunc(window.innerHeight / particleSize + 1),
         );
         modInd = 0;
         updatedInd = 0;
         updatedPart = new Array(
-            parseInt(window.innerWidth / particleSize + 1, 10),
+            Math.trunc(window.innerWidth / particleSize + 1),
         );
         for (
             var i = 0;
-            i < parseInt(window.innerWidth / particleSize + 1, 10);
+            i < Math.trunc(window.innerWidth / particleSize + 1);
             i++
         ) {
             updatedPart[i] = new Array(
-                parseInt(window.innerHeight / particleSize + 1, 10),
+                Math.trunc(window.innerHeight / particleSize + 1),
             );
             particles.push(
-                new Array(parseInt(window.innerHeight / particleSize + 1, 10)),
+                new Array(Math.trunc(window.innerHeight / particleSize + 1)),
             );
             for (
                 var j = 0;
-                j < parseInt(window.innerHeight / particleSize + 1, 10);
+                j < Math.trunc(window.innerHeight / particleSize + 1);
                 j++
             ) {
                 particles[i][j] = new Particulate();
@@ -227,7 +229,8 @@ TODO: speed up game
                 var ben = getBeneath(event);
                 if (ben != null && ben.nodeName == "A")
                     canvas.style.cursor = "pointer";
-                else if (ben != null) canvas.style.cursor = ben.style.cursor;
+                else if (ben != null)
+                    canvas.style.cursor = (ben as HTMLElement).style.cursor;
                 else canvas.style.cursor = "default";
                 if (isDown) mouseMove(event);
             },
@@ -372,8 +375,8 @@ TODO: speed up game
                     if (positioning == "relative") {
                         if (shape == "rectangle")
                             rectanglePoint(
-                                parseInt(partWidth * x, 10),
-                                parseInt(partHeight * y, 10),
+                                Math.trunc(partWidth * x),
+                                Math.trunc(partHeight * y),
                                 partWidth * width,
                                 partHeight * height,
                                 type,
@@ -382,19 +385,19 @@ TODO: speed up game
                             );
                         else if (shape == "circle")
                             circlePoint(
-                                parseInt(partWidth * x, 10),
-                                parseInt(partHeight * y, 10),
-                                parseInt(partWidth * width, 10),
+                                Math.trunc(partWidth * x),
+                                Math.trunc(partHeight * y),
+                                Math.trunc(partWidth * width),
                                 type,
                                 true,
                                 [],
                             );
                         else if (shape == "elipse")
                             elipsePoint(
-                                parseInt(partWidth * x, 10),
-                                parseInt(partHeight * y, 10),
-                                parseInt(partWidth * width, 10),
-                                parseInt(partHeight * height, 10),
+                                Math.trunc(partWidth * x),
+                                Math.trunc(partHeight * y),
+                                Math.trunc(partWidth * width),
+                                Math.trunc(partHeight * height),
                                 type,
                                 true,
                                 [],
@@ -415,8 +418,8 @@ TODO: speed up game
                         particleSize,
                     );
                     if (positioning == "relative") {
-                        player.x = parseInt(partWidth * x, 10);
-                        player.y = parseInt(partHeight * y, 10);
+                        player.x = Math.trunc(partWidth * x);
+                        player.y = Math.trunc(partHeight * y);
                     } else if (positioning == "absolute") {
                         player.x = parseInt(x, 10);
                         player.y = parseInt(y, 10);
@@ -483,16 +486,16 @@ TODO: speed up game
             /* Escape */
             alert(
                 "updatedPart: " +
-                    updatedPart[parseInt(curX / particleSize, 10)][
-                        parseInt(curY / particleSize, 10)
+                    updatedPart[Math.trunc(curX / particleSize)][
+                        Math.trunc(curY / particleSize)
                     ] +
                     "\npariticles: " +
-                    particles[parseInt(curX / particleSize, 10)][
-                        parseInt(curY / particleSize, 10)
+                    particles[Math.trunc(curX / particleSize)][
+                        Math.trunc(curY / particleSize)
                     ].fresh,
             );
-            var x = parseInt(curX / particleSize, 10);
-            var y = parseInt(curY / particleSize, 10);
+            var x = Math.trunc(curX / particleSize);
+            var y = Math.trunc(curY / particleSize);
             var count = 0;
             for (var i = -1; i < 2; i++)
                 for (var j = -1; j < 2; j++)
@@ -640,8 +643,8 @@ TODO: speed up game
             var touches = evt.changedTouches;
             for (var i = 0; i < touches.length; i++) {
                 circlePoint(
-                    parseInt(touches[i].clientX / particleSize, 10),
-                    parseInt(touches[i].clientY / particleSize, 10),
+                    Math.trunc(touches[i].clientX / particleSize),
+                    Math.trunc(touches[i].clientY / particleSize),
                     penSize,
                     getElem(),
                     true,
@@ -663,8 +666,8 @@ TODO: speed up game
                 var y = parseInt(event.clientY, 10);
                 do {
                     circlePoint(
-                        parseInt(x / particleSize, 10),
-                        parseInt(y / particleSize, 10),
+                        Math.trunc(x / particleSize),
+                        Math.trunc(y / particleSize),
                         penSize,
                         getElem(),
                         true,
@@ -695,14 +698,7 @@ TODO: speed up game
         x = player.x + (x - player.x) / magnitude;
         y = player.y + (y - player.y) / magnitude;
 
-        circlePoint(
-            parseInt(x, 10),
-            parseInt(y, 10),
-            penSize,
-            getElem(),
-            true,
-            [],
-        );
+        circlePoint(Math.trunc(x), Math.trunc(y), penSize, getElem(), true, []);
     }
 
     /* converts the given elem to a valid elem type */
@@ -1586,7 +1582,7 @@ TODO: speed up game
                 if (getDensity(particle.old) >= getDensity(type)) {
                     /* e.g. droplet falling onto soil */
                     forcePoint(x, y, particle.old);
-                    var flow = Math.floor(Math.random() * 4);
+                    flow = Math.floor(Math.random() * 4);
                     if (
                         flow <= 1 &&
                         ((isLiquid(particles[x - 1][y - 1].fresh) &&
@@ -1635,7 +1631,7 @@ TODO: speed up game
                 return true;
             }
             if (isGas(particle.old) && isGas(type) && type != "cloud") {
-                var flow = Math.floor(Math.random() * 4);
+                flow = Math.floor(Math.random() * 4);
                 if (flow <= 1 && particles[x - 1][y + 1].fresh == "empty")
                     changePoint(x - 1, y + 1, type);
                 else if (flow >= 2 && particles[x + 1][y + 1].fresh == "empty")
