@@ -5,9 +5,10 @@ let prevCount = 0;
 let prevData = null;
 let prevNewPixelCount = 0;
 
-let copyTexture: WebGLTexture | undefined;
+const copyTextures = new WeakMap<WebGLRenderingContext, WebGLTexture>();
 
 function getCopyTexture(gl: WebGLRenderingContext): WebGLTexture {
+    let copyTexture = copyTextures.get(gl);
     if (!copyTexture) {
         copyTexture = createColorTexture(
             gl,
@@ -15,6 +16,7 @@ function getCopyTexture(gl: WebGLRenderingContext): WebGLTexture {
             gl.canvas.width,
             gl.canvas.height,
         );
+        copyTextures.set(gl, copyTexture);
     }
     return copyTexture;
 }
