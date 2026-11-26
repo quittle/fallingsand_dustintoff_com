@@ -21,19 +21,8 @@ jobs:
               with:
                   node-version-file: ".nvmrc"
                   cache: "npm"
-            - name: Cache browser binaries
-              uses: actions/cache@v6
-              with:
-                  path: |
-                      ~/.cache/puppeteer
-                      ~/.cache/electron
-                  key: ${{ runner.os }}-browser-binaries-${{ hashFiles('package-lock.json') }}
             - run: npm ci
             - run: npm run build
-            - name: Setup Rust
-              run: rustup set profile default
-            - run: npm run wasm-pack
-            - run: npm run test
             - name: Configure AWS Credentials
               if: github.ref == 'refs/heads/main' && github.event_name == 'push'
               uses: aws-actions/configure-aws-credentials@v6.3.0

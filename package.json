@@ -3,38 +3,15 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "dev:rust": "vite --config vite.config.rust.js",
-        "build:rust": "npm run wasm-pack && vite build --config vite.config.rust.js",
-        "wasm-pack": "wasm-pack build rust --target bundler",
         "prettier-check": "prettier . --check",
         "prettier": "prettier . --write",
-        "cargo-fmt-check": "cd rust && cargo fmt --all --check",
-        "cargo-fmt": "cd rust && cargo fmt --all",
-        "clippy-check": "cd rust && cargo clippy --all-targets --all-features -- -D warnings",
-        "clippy": "cd rust && cargo clippy --fix --allow-dirty --allow-staged",
-        "format-check": "npm run prettier-check && npm run cargo-fmt-check",
-        "format": "npm run prettier && npm run clippy && npm run cargo-fmt",
-        "type-check": "tsc --noEmit",
-        "test": "NODE_OPTIONS='--experimental-vm-modules' jest --detectOpenHandles",
-        "release": "npm run format-check && npm run clippy-check && npm run wasm-pack && npm run type-check && npm run build:rust && npm run test",
+        "format-check": "npm run prettier-check",
+        "format": "npm run prettier",
         "deploy": "./scripts/deploy"
     },
     "devDependencies": {
-        "@types/jest": "^29.5.5",
-        "electron": "^45.4.1",
-        "gl-matrix": "^3.4.3",
-        "hello-wasm": "file:rust/pkg",
-        "jest": "^29.7.0",
         "prettier": "^3.0.0",
-        "puppeteer": "^21.3.8",
         "s3-upload-custom-resource-lambda-layer": "^1.4.0",
-        "ts-jest": "^29.1.1",
-        "typescript": "^5.1.6",
-        "vite": "^4.4.6",
-        "vite-plugin-top-level-await": "^1.3.1",
-        "vite-plugin-wasm": "^3.2.2",
-        "vite-plugin-watch": "^0.2.0",
-        "wasm-pack": "^0.12.1",
-        "webgl-lint": "^1.11.2"
+        "vite": "^4.4.6"
     }
 }
