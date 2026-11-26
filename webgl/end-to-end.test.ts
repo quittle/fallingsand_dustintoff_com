@@ -1,4 +1,4 @@
-import puppeteer, { Browser, Page } from "puppeteer";
+import type { Browser, Page } from "puppeteer";
 import { createServer, ViteDevServer } from "vite";
 import { readCurrentPixels } from "./utils";
 import { runFrame, setupCanvas } from ".";
@@ -42,8 +42,9 @@ describe("end-to-end", () => {
             configFile: "vite.config.rust.js",
         });
         await viteDevServer.listen();
+        const { default: puppeteer } = await import("puppeteer");
         browser = await puppeteer.launch({
-            headless: "new",
+            headless: true,
             dumpio: true,
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
         });
