@@ -15,7 +15,7 @@
         "format-check": "npm run prettier-check && npm run cargo-fmt-check",
         "format": "npm run prettier && npm run clippy && npm run cargo-fmt",
         "type-check": "tsc --noEmit",
-        "test": "NODE_OPTIONS='--experimental-vm-modules' jest --detectOpenHandles",
+        "test": "npm run build:rust && NODE_OPTIONS='--experimental-vm-modules' jest --detectOpenHandles",
         "release": "npm run format-check && npm run clippy-check && npm run wasm-pack && npm run type-check && npm run build:rust && npm run test",
         "deploy": "./scripts/deploy"
     },

@@ -1,5 +1,5 @@
 import type { Browser, Page } from "puppeteer";
-import { createServer, ViteDevServer } from "vite";
+import { preview, PreviewServer } from "vite";
 import { readCurrentPixels } from "./utils";
 import { runFrame, setupCanvas } from ".";
 
@@ -34,14 +34,13 @@ namespace InBrowser {
 
 describe("end-to-end", () => {
     let browser: Browser;
-    let viteDevServer: ViteDevServer;
+    let previewServer: PreviewServer;
     const pageErrors: string[] = [];
 
     beforeAll(async () => {
-        viteDevServer = await createServer({
+        previewServer = await preview({
             configFile: "vite.config.rust.js",
         });
-        await viteDevServer.listen();
         const { default: puppeteer } = await import("puppeteer");
         browser = await puppeteer.launch({
             headless: true,
@@ -49,7 +48,7 @@ describe("end-to-end", () => {
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
         });
         pageErrors.length = 0;
-    });
+    }, 30000);
 
     let page: Page;
     beforeEach(async () => {
@@ -73,11 +72,11 @@ describe("end-to-end", () => {
 
     afterAll(async () => {
         await browser?.close();
-        await viteDevServer.close();
+        previewServer.httpServer.close();
     });
 
     async function loadPage(pathname: string): Promise<void> {
-        const baseUrl = new URL(viteDevServer.resolvedUrls.local[0]);
+        const baseUrl = new URL(previewServer.resolvedUrls.local[0]);
         baseUrl.pathname = pathname;
         const response = await page.goto(baseUrl.toString());
         expect(response.ok()).toBe(true);
@@ -110,5 +109,5 @@ describe("end-to-end", () => {
             const { canvas, gl } = window.getOrInitialize();
             // window.runFrame(gl, canvas, null);
         });
-    });
+    }, 30000);
 });
