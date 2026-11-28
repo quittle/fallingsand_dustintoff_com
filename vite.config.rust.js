@@ -1,5 +1,4 @@
 import wasm from "vite-plugin-wasm";
-import topLevelAwait from "vite-plugin-top-level-await";
 import { watch } from "vite-plugin-watch";
 
 export default {
@@ -10,10 +9,9 @@ export default {
             onInit: false,
         }),
         wasm(),
-        topLevelAwait(),
     ],
     worker: {
-        plugins: [wasm(), topLevelAwait()],
+        plugins: () => [wasm()],
     },
     build: {
         rollupOptions: {

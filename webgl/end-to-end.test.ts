@@ -1,5 +1,7 @@
 import type { Browser, Page } from "puppeteer";
-import { createServer, ViteDevServer } from "vite";
+import { createServer, Server } from "node:http";
+import { createReadStream } from "node:fs";
+import { join } from "node:path";
 import { readCurrentPixels } from "./utils";
 import { runFrame, setupCanvas } from ".";
 
@@ -34,14 +36,23 @@ namespace InBrowser {
 
 describe("end-to-end", () => {
     let browser: Browser;
-    let viteDevServer: ViteDevServer;
+    let server: Server;
+    const baseUrl = "http://127.0.0.1:5199/";
     const pageErrors: string[] = [];
 
     beforeAll(async () => {
-        viteDevServer = await createServer({
-            configFile: "vite.config.rust.js",
+        server = createServer((req, res) => {
+            const pathname = new URL(req.url, "http://localhost").pathname;
+            const type = pathname.endsWith(".wasm")
+                ? "application/wasm"
+                : pathname.endsWith(".html")
+                ? "text/html"
+                : "text/javascript";
+            createReadStream(join("dist", pathname))
+                .on("error", () => res.writeHead(404).end())
+                .pipe(res.writeHead(200, { "Content-Type": type }));
         });
-        await viteDevServer.listen();
+        await new Promise<void>((resolve) => server.listen(5199, resolve));
         const { default: puppeteer } = await import("puppeteer");
         browser = await puppeteer.launch({
             headless: true,
@@ -73,13 +84,12 @@ describe("end-to-end", () => {
 
     afterAll(async () => {
         await browser?.close();
-        await viteDevServer.close();
+        server.closeAllConnections();
+        server.close();
     });
 
     async function loadPage(pathname: string): Promise<void> {
-        const baseUrl = new URL(viteDevServer.resolvedUrls.local[0]);
-        baseUrl.pathname = pathname;
-        const response = await page.goto(baseUrl.toString());
+        const response = await page.goto(new URL(pathname, baseUrl).toString());
         expect(response.ok()).toBe(true);
     }
 
